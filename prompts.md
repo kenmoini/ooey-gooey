@@ -1,0 +1,58 @@
+```
+Build a simple Javascript web application.  Use NextJS and the Park UI framework.  All data should be processed client-side.  The main interface is a form wizard that takes input data and templates it conditionally into the YAML presented to the user.  The form wizard has multiple pages to progress through: General, Architecture, Nodes, Networking, Advanced, and Preview.  The General page should have two input fields for "Cluster Name" and "Cluster Domain".  The Architecture page should have a dropdown for "Cluster Type" with options "Single Node", "Compact", and "Multi HA Cluster".  The Nodes page should present a button to add a Node(s) and define it's name with a text input field.  The Networking page needs a dropdown for "Load Balancer Type" with the options "Internal" and "External".  The Advanced page needs a textarea input field for "Additional Trusted Root CAs".  The Preview page should display all the input variables from the previous pages.
+```
+
+```
+On the Node page of the Wizard, please add a dropdown between the text input and Add Node button.  This dropdown should only be shown if the Cluster Type dropdown on the Architecture page is equal to "Multi HA Cluster"
+```
+
+```
+Thanks - add some logic to the Nodes page that disables the "Control Plane" option in the dropdown if there are already 5 Control Plane nodes defined
+```
+
+```
+On the Node page, add logic to ensure node names are unique and not already present in the list
+```
+
+```
+Add logic to the Nodes page that if the Cluster Type dropdown on the Architecture page is equal to "Single Node" that you cannot add more than one node to the list.  Repeat that logic to make sure if Cluster Type is equal to "Compact" that you cannot add more than 3 nodes to the list.
+```
+
+```
+Add logic to the General page to make sure the Cluster Name follows the DNS label standard as defined in RFC 1123. This means the name must:
+
+- contain at most 63 characters
+- contain only lowercase alphanumeric characters or '-'
+- start with an alphabetic character
+- end with an alphanumeric character.
+
+Alert the user if non-compliant input is detected.
+```
+
+```
+Add logic to the General page to ensure the Cluster Domain is a valid domain - no need for a network test, just formatting.
+```
+
+```
+Add logic to the Nodes page that after 3 Control Plane nodes have been added to the list, the default option in the Node Role dropdown is "Application"
+```
+
+```
+Add a dropdown to the Architecture page for "Platform Type" - the options are "Bare Metal", "vSphere", and "None".  If Cluster Type is equal to "Single Node" the Platform Type dropdown must be set to "None" an disabled.
+```
+
+```
+Add a text input to the Networking page titled "API VIP".  Add another text input below it for "Ingress VIP"
+```
+
+```
+Add a list input on the Advanced page titled "NTP Servers".  Also a text input field titled "Total Cluster Network CIDR" with a default of "10.128.0.0/14", and a dropdown titled "Cluster Network Host Prefix" with options 8-26.
+```
+
+```
+On the Advanced page, add a collapsed section with a set of input text fields for "HTTP Proxy", "HTTPS Proxy" and "No Proxy"
+```
+
+```
+Add a confirmation popup to the Nodes page when clicking Remove from a listed node
+```
