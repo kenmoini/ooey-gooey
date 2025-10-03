@@ -41,6 +41,30 @@ export default function PreviewStep() {
                 <span className="font-medium">Ingress VIP:</span> {formData.ingressVIP}
               </div>
             )}
+            {formData.dnsServers.length > 0 && (
+              <div>
+                <span className="font-medium">DNS Servers:</span>
+                <ul className="ml-6 mt-1">
+                  {formData.dnsServers.map((server, index) => (
+                    <li key={index} className="list-disc">
+                      {server}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {formData.dnsSearchDomains.length > 0 && (
+              <div>
+                <span className="font-medium">DNS Search Domains:</span>
+                <ul className="ml-6 mt-1">
+                  {formData.dnsSearchDomains.map((domain, index) => (
+                    <li key={index} className="list-disc">
+                      {domain}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             {formData.nodes.length > 0 && (
               <div>
                 <span className="font-medium">Nodes:</span>
@@ -72,6 +96,34 @@ export default function PreviewStep() {
             <div>
               <span className="font-medium">Cluster Network Host Prefix:</span> {formData.clusterNetworkHostPrefix}
             </div>
+            <div>
+              <span className="font-medium">Service Network CIDR:</span> {formData.serviceNetworkCIDR}
+            </div>
+            {formData.configureDisconnectedRegistries && (
+              <div>
+                <span className="font-medium">Disconnected Registries:</span>
+                <div className="ml-6 mt-1">
+                  <div className="text-sm">
+                    <span className="font-medium">Release Image Registry:</span> {formData.releaseImageRegistry}
+                  </div>
+                  <div className="text-sm">
+                    <span className="font-medium">Platform Images Registry:</span> {formData.platformImagesRegistry}
+                  </div>
+                </div>
+              </div>
+            )}
+            {formData.sshPublicKeys.length > 0 && (
+              <div>
+                <span className="font-medium">SSH Public Keys:</span>
+                <ul className="ml-6 mt-1">
+                  {formData.sshPublicKeys.map((key, index) => (
+                    <li key={index} className="list-disc">
+                      <span className="font-mono text-xs">{key.substring(0, 50)}...</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             {(formData.httpProxy || formData.httpsProxy || formData.noProxy) && (
               <div>
                 <span className="font-medium">Proxy Configuration:</span>

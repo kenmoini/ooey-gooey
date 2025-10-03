@@ -5,14 +5,16 @@ import GeneralStep from "./wizard/GeneralStep";
 import ArchitectureStep from "./wizard/ArchitectureStep";
 import NodesStep from "./wizard/NodesStep";
 import NetworkingStep from "./wizard/NetworkingStep";
+import DisconnectedStep from "./wizard/DisconnectedStep";
 import AdvancedStep from "./wizard/AdvancedStep";
 import PreviewStep from "./wizard/PreviewStep";
 
 const steps = [
   { title: "General", component: GeneralStep },
   { title: "Architecture", component: ArchitectureStep },
-  { title: "Networking", component: NetworkingStep },
   { title: "Nodes", component: NodesStep },
+  { title: "Networking", component: NetworkingStep },
+  { title: "Disconnected", component: DisconnectedStep },
   { title: "Advanced", component: AdvancedStep },
   { title: "Preview", component: PreviewStep },
 ];
@@ -34,7 +36,7 @@ export default function Wizard() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-8">
+    <div className="max-w-8xl mx-auto p-8">
       {/* Progress indicator */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">

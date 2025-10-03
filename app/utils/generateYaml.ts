@@ -33,6 +33,21 @@ export function generateYaml(formData: FormData): string {
     yamlData.networking.ingressVIP = formData.ingressVIP;
   }
 
+  if (formData.dnsServers.length > 0) {
+    yamlData.networking.dnsServers = formData.dnsServers;
+  }
+
+  if (formData.dnsSearchDomains.length > 0) {
+    yamlData.networking.dnsSearchDomains = formData.dnsSearchDomains;
+  }
+
+  if (formData.configureDisconnectedRegistries) {
+    yamlData.disconnected = {
+      releaseImageRegistry: formData.releaseImageRegistry,
+      platformImagesRegistry: formData.platformImagesRegistry,
+    };
+  }
+
   yamlData.advanced = {};
 
   if (formData.ntpServers.length > 0) {
@@ -41,6 +56,11 @@ export function generateYaml(formData: FormData): string {
 
   yamlData.advanced.totalClusterNetworkCIDR = formData.totalClusterNetworkCIDR;
   yamlData.advanced.clusterNetworkHostPrefix = formData.clusterNetworkHostPrefix;
+  yamlData.advanced.serviceNetworkCIDR = formData.serviceNetworkCIDR;
+
+  if (formData.sshPublicKeys.length > 0) {
+    yamlData.advanced.sshPublicKeys = formData.sshPublicKeys;
+  }
 
   if (formData.httpProxy.trim() || formData.httpsProxy.trim() || formData.noProxy.trim()) {
     yamlData.advanced.proxy = {};

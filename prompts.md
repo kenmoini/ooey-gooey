@@ -56,3 +56,27 @@ On the Advanced page, add a collapsed section with a set of input text fields fo
 ```
 Add a confirmation popup to the Nodes page when clicking Remove from a listed node
 ```
+
+```
+On the Advanced page, add a collapsed section called "Cluster Subnets" and move the "Total Cluster network CIDR" and "Cluster Network Host Prefix" into that collapsed section.
+```
+
+```
+On the Advanced page, in the Cluster Subnets collapsible section, add a text input field for "Service Network CIDR" with a default value of "172.30.0.0/16"
+```
+
+```
+On the Networking page, add a set of list inputs for "DNS Servers" and "DNS Search Domains"
+```
+
+```
+On the Advanced page, add a list input for "SSH Public Keys".
+```
+
+```
+Add a page to the Wizard called "Disconnected" before the "Advanced" page.  On the Disconnected page, add a checkbox toggle titled "Configure Disconnected Registries".  When checked, it should show an input field for "Release Image Registry" with a default value of "quay.io/openshift-release-dev/ocp-release" and for "Platform Images Registry" with a default value of "quay.io/openshift-release-dev/ocp-v4.0-art-dev"
+```
+
+```
+On the Advanced page, add a button to the SSH Public Keys input for a user to upload a public key file.
+```
