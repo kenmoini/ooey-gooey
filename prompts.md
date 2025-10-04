@@ -235,3 +235,7 @@ We need to take this application and generate a static site for hosting on GitHu
 ```
 In HostNetworkingStep.tsx add a Radio toggle option in the list of defined interfaces for "Default Route", there should only be one Default Route interface per Host, when a new interface is toggled as the Default Route interface the others should be untoggled.
 ```
+
+```
+In HostNetworkingStep.tsx hide the Default Route radio toggle if the interface is an ethernet type and used as a Base Interface for a VLAN or used as a Port for a Bridge or Bond.
+```

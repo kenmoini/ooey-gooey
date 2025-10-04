@@ -349,6 +349,15 @@ export default function HostNetworkingStep() {
                       <div className="space-y-3">
                         {node.interfaces.map((iface) => {
                           const isInterfaceExpanded = expandedInterfaces.has(iface.id);
+
+                          // Check if this ethernet interface is used as a base interface for VLAN or as a port in Bond/Bridge
+                          const isUsedAsBaseOrPort = (!iface.type || iface.type === "Ethernet") && node.interfaces?.some(
+                            otherIface =>
+                              (otherIface.type === "VLAN" && otherIface.vlanBaseInterface === iface.deviceName) ||
+                              (otherIface.type === "Bond" && otherIface.bondPorts?.includes(iface.deviceName)) ||
+                              (otherIface.type === "Bridge" && otherIface.bridgePorts?.includes(iface.deviceName))
+                          );
+
                           return (
                             <div key={iface.id} className="border border-gray-200 rounded-md bg-white">
                               <div className="flex items-center">
@@ -369,18 +378,20 @@ export default function HostNetworkingStep() {
                                         {iface.type || "Ethernet"}
                                       </span>
                                     </div>
-                                    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                                      <input
-                                        type="radio"
-                                        id={`default-route-${node.id}-${iface.id}`}
-                                        checked={iface.defaultRoute ?? false}
-                                        onChange={() => toggleDefaultRoute(node.id, iface.id)}
-                                        className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                                      />
-                                      <label htmlFor={`default-route-${node.id}-${iface.id}`} className="text-sm text-gray-700">
-                                        Default Route
-                                      </label>
-                                    </div>
+                                    {!isUsedAsBaseOrPort && (
+                                      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                                        <input
+                                          type="radio"
+                                          id={`default-route-${node.id}-${iface.id}`}
+                                          checked={iface.defaultRoute ?? false}
+                                          onChange={() => toggleDefaultRoute(node.id, iface.id)}
+                                          className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                        />
+                                        <label htmlFor={`default-route-${node.id}-${iface.id}`} className="text-sm text-gray-700">
+                                          Default Route
+                                        </label>
+                                      </div>
+                                    )}
                                   </div>
                                   <svg
                                     className={`w-5 h-5 transition-transform ${isInterfaceExpanded ? "rotate-180" : ""}`}
