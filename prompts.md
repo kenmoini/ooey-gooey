@@ -88,3 +88,19 @@ On the Disconnected page, add an object list input field for "Additional Registr
 ```
 On the Host Configuration page create a wide collaped card for all the Nodes added in the Nodes page.  When the card is expanded, it should have input fields for an object list of "Interfaces" with inputs/keys for "Device Name" and "MAC Address".
 ```
+
+```
+Add a page to the Wizard called "Host Networking".  Duplicate the Node card list from the "Host Configuration" page, including the defined list of defined Interfaces there.  For each Interface defined, create a collapsed section on the Host Networking page.  When expanded, it presents the following inputs:
+- State, a dropdown with options "Up" or "Down"
+- Type, a dropdown with options "Ethernet", "Bond", "Bridge", and "VLAN"
+- Enable IPv4, a checkbox
+- Enable IPv6, a checkbox
+```
+
+```
+On the Host Networking page, on each defined Interface add an input field for "MTU" that defaults to 1500.
+```
+
+```
+On the Host Networking page, when Enable IPv4 is checked, display another checkbox titled "Enable IPv4 DHCP" that is checked by default.  If unchecked, display an input for "IP Address" for the interface.
+```

@@ -3,6 +3,7 @@
 import { useFormContext } from "@/app/context/FormContext";
 import GeneralStep from "./wizard/GeneralStep";
 import HostConfigurationStep from "./wizard/HostConfigurationStep";
+import HostNetworkingStep from "./wizard/HostNetworkingStep";
 import NodesStep from "./wizard/NodesStep";
 import NetworkingStep from "./wizard/NetworkingStep";
 import DisconnectedStep from "./wizard/DisconnectedStep";
@@ -14,6 +15,7 @@ const steps = [
   { title: "Networking", component: NetworkingStep },
   { title: "Nodes", component: NodesStep },
   { title: "Host Configuration", component: HostConfigurationStep },
+  { title: "Host Networking", component: HostNetworkingStep },
   { title: "Disconnected", component: DisconnectedStep },
   { title: "Advanced", component: AdvancedStep },
   { title: "Preview", component: PreviewStep },

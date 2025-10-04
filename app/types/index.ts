@@ -3,10 +3,27 @@ export type LoadBalancerType = "Internal" | "External";
 export type NodeRole = "Control Plane" | "Application";
 export type PlatformType = "Bare Metal" | "vSphere" | "None";
 
+export type InterfaceState = "Up" | "Down";
+export type InterfaceType = "Ethernet" | "Bond" | "Bridge" | "VLAN";
+
+export interface NetworkInterface {
+  id: string;
+  deviceName: string;
+  macAddress: string;
+  state?: InterfaceState;
+  type?: InterfaceType;
+  enableIPv4?: boolean;
+  enableIPv4DHCP?: boolean;
+  ipv4Address?: string;
+  enableIPv6?: boolean;
+  mtu?: number;
+}
+
 export interface Node {
   id: string;
   name: string;
   role?: NodeRole;
+  interfaces?: NetworkInterface[];
 }
 
 export interface RegistryMapping {
