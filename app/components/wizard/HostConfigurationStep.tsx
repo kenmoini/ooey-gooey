@@ -10,6 +10,7 @@ export default function HostConfigurationStep() {
   const [deviceNames, setDeviceNames] = useState<{ [nodeId: string]: string }>({});
   const [macAddresses, setMacAddresses] = useState<{ [nodeId: string]: string }>({});
   const [errors, setErrors] = useState<{ [nodeId: string]: string }>({});
+  const [interfaceToRemove, setInterfaceToRemove] = useState<{ nodeId: string; interfaceId: string; interfaceName: string } | null>(null);
 
   const toggleNode = (nodeId: string) => {
     const newExpanded = new Set(expandedNodes);
@@ -62,18 +63,25 @@ export default function HostConfigurationStep() {
     }
   };
 
-  const removeInterface = (nodeId: string, interfaceId: string) => {
-    const updatedNodes = formData.nodes.map((node) => {
-      if (node.id === nodeId) {
-        return {
-          ...node,
-          interfaces: node.interfaces?.filter((iface) => iface.id !== interfaceId) || [],
-        };
-      }
-      return node;
-    });
+  const confirmRemoveInterface = () => {
+    if (interfaceToRemove) {
+      const updatedNodes = formData.nodes.map((node) => {
+        if (node.id === interfaceToRemove.nodeId) {
+          return {
+            ...node,
+            interfaces: node.interfaces?.filter((iface) => iface.id !== interfaceToRemove.interfaceId) || [],
+          };
+        }
+        return node;
+      });
 
-    updateFormData({ nodes: updatedNodes });
+      updateFormData({ nodes: updatedNodes });
+      setInterfaceToRemove(null);
+    }
+  };
+
+  const cancelRemoveInterface = () => {
+    setInterfaceToRemove(null);
   };
 
   return (
@@ -123,8 +131,8 @@ export default function HostConfigurationStep() {
                             Installation Device
                           </label>
                         </div>
-                        <div className="col-span-1 items-right align-right space-y-2">
-                          <div className="flex items-right gap-2">
+                        <div className="col-span-1 text-right items-right align-right space-y-2">
+                          <div className="flex justify-end items-right gap-2">
                             <input
                               type="checkbox"
                               id={`auto-install-${node.id}`}
@@ -230,7 +238,7 @@ export default function HostConfigurationStep() {
                                   </div>
                                 </div>
                                 <button
-                                  onClick={() => removeInterface(node.id, iface.id)}
+                                  onClick={() => setInterfaceToRemove({ nodeId: node.id, interfaceId: iface.id, interfaceName: iface.deviceName })}
                                   className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded ml-4"
                                 >
                                   Remove
@@ -246,6 +254,32 @@ export default function HostConfigurationStep() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {interfaceToRemove && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style={{ marginTop: 0, marginBottom: 0 }}>
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Confirm Remove Interface</h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to remove interface <span className="font-semibold">{interfaceToRemove.interfaceName}</span>?
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={cancelRemoveInterface}
+                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmRemoveInterface}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

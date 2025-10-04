@@ -180,3 +180,19 @@ On the Networking page, if the Cluster Type is "Single Node" then hide the input
 ```
 On the Host Configuration page, for each defined host show a checkbox for "Installation Device: Auto" and when unchecked it displays a text input field for the installation device path.
 ```
+
+```
+On the Advanced page, add a checkbox input for "FIPS Mode" with the default being unchecked.
+```
+
+```
+On the Host Networking page, display a prompt to the user to confirm Interface deletion
+```
+
+```
+Change the remove confirmation logic in HostConfigurationStep.tsx to match the alerting logic present in the confirmRemoveNode functionality in NodesStep.tsx
+```
+
+```
+In HostNetworkingStep.tsx add user confirmation when deleting an interface, copy the modal pattern from HostConfigurationStep.tsx
+```

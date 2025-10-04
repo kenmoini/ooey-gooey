@@ -45,6 +45,7 @@ export interface FormData {
   clusterDomain: string;
   clusterType: ClusterType;
   platformType: PlatformType;
+  fipsMode: boolean;
   nodes: Node[];
   loadBalancerType: LoadBalancerType;
   apiVIP: string;
@@ -71,6 +72,7 @@ export const initialFormData: FormData = {
   clusterDomain: "",
   clusterType: "Multi HA Cluster",
   platformType: "Bare Metal",
+  fipsMode: false,
   nodes: [],
   loadBalancerType: "Internal",
   apiVIP: "",

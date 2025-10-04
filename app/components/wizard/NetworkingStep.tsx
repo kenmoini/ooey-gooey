@@ -52,7 +52,7 @@ export default function NetworkingStep() {
               <div>
                 <h3 className="text-sm font-semibold text-blue-900 mb-1">Single Node Deployment</h3>
                 <p className="text-sm text-blue-800">
-                  API VIP and Ingress VIP are not used with Single Node deployments. Only the Node IP address is needed, which should be configured in the Host Networking section.
+                  API VIP and Ingress VIP are not used with Single Node deployments. Only the Node IP address is needed, which should be configured in the Host Networking section.<br /><strong>API and Ingress DNS records should point to the Single Node Host IP address.</strong>
                 </p>
               </div>
             </div>

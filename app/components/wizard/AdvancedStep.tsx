@@ -171,7 +171,6 @@ export default function AdvancedStep() {
           />
         </div>
 
-
         <div className="border border-gray-300 rounded-md">
           <button
             type="button"
@@ -305,6 +304,22 @@ export default function AdvancedStep() {
               </div>
             </div>
           )}
+        </div>
+
+        <div className="items-center pt-4">
+          <input
+            id="fipsMode"
+            type="checkbox"
+            checked={formData.fipsMode}
+            onChange={(e) => updateFormData({ fipsMode: e.target.checked })}
+            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          />
+          <label htmlFor="fipsMode" className="ml-2 text-sm font-medium">
+            FIPS Mode
+          </label>
+          <p className="mt-1 text-sm text-gray-500">
+            Note: To deploy a FIPS-enabled cluster, the host used to generate the ABI ISO must also be FIPS-enabled.
+          </p>
         </div>
       </div>
     </div>

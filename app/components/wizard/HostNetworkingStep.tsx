@@ -13,6 +13,7 @@ export default function HostNetworkingStep() {
   const [showBondPortSuggestions, setShowBondPortSuggestions] = useState<{ [interfaceId: string]: boolean }>({});
   const [bridgePortInput, setBridgePortInput] = useState<{ [interfaceId: string]: string }>({});
   const [showBridgePortSuggestions, setShowBridgePortSuggestions] = useState<{ [interfaceId: string]: boolean }>({});
+  const [interfaceToRemove, setInterfaceToRemove] = useState<{ nodeId: string; interfaceId: string; interfaceName: string } | null>(null);
 
   const toggleNode = (nodeId: string) => {
     const newExpanded = new Set(expandedNodes);
@@ -100,23 +101,30 @@ export default function HostNetworkingStep() {
     setShowAddInterfaceMenu({ ...showAddInterfaceMenu, [nodeId]: false });
   };
 
-  const removeInterface = (nodeId: string, interfaceId: string) => {
-    const updatedNodes = formData.nodes.map((node) => {
-      if (node.id === nodeId) {
-        return {
-          ...node,
-          interfaces: node.interfaces?.filter((iface) => iface.id !== interfaceId),
-        };
-      }
-      return node;
-    });
+  const confirmRemoveInterface = () => {
+    if (interfaceToRemove) {
+      const updatedNodes = formData.nodes.map((node) => {
+        if (node.id === interfaceToRemove.nodeId) {
+          return {
+            ...node,
+            interfaces: node.interfaces?.filter((iface) => iface.id !== interfaceToRemove.interfaceId),
+          };
+        }
+        return node;
+      });
 
-    updateFormData({ nodes: updatedNodes });
-    setExpandedInterfaces((prev) => {
-      const newExpanded = new Set(prev);
-      newExpanded.delete(interfaceId);
-      return newExpanded;
-    });
+      updateFormData({ nodes: updatedNodes });
+      setExpandedInterfaces((prev) => {
+        const newExpanded = new Set(prev);
+        newExpanded.delete(interfaceToRemove.interfaceId);
+        return newExpanded;
+      });
+      setInterfaceToRemove(null);
+    }
+  };
+
+  const cancelRemoveInterface = () => {
+    setInterfaceToRemove(null);
   };
 
   return (
@@ -205,7 +213,7 @@ export default function HostNetworkingStep() {
                                 {(!iface.type || iface.type !== "Ethernet") && (
                                   <button
                                     type="button"
-                                    onClick={() => removeInterface(node.id, iface.id)}
+                                    onClick={() => setInterfaceToRemove({ nodeId: node.id, interfaceId: iface.id, interfaceName: iface.deviceName })}
                                     className="px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700"
                                     title="Remove interface"
                                   >
@@ -644,6 +652,32 @@ export default function HostNetworkingStep() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {interfaceToRemove && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style={{ marginTop: 0, marginBottom: 0 }}>
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Confirm Remove Interface</h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to remove interface <span className="font-semibold">{interfaceToRemove.interfaceName}</span>?
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={cancelRemoveInterface}
+                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmRemoveInterface}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
