@@ -36,6 +36,12 @@ jobs:
         env:
           NODE_ENV: production
 
+      - name: Move the out directory into a subpath
+        run: |
+          mkdir nout
+          mv out nout/abi-gui
+          mv nout out
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

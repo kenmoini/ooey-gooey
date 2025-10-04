@@ -227,3 +227,7 @@ In the HostNetworkingStep.tsx file, when progressing to the next step, validate 
 - IPv4 IP addresses are defined only once across interfaces and hosts
 ```
 
+```
+# Plan Mode
+We need to take this application and generate a static site for hosting on GitHub Pages.
+```
