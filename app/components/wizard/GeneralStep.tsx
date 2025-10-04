@@ -149,7 +149,7 @@ export default function GeneralStep() {
             <p className="mt-1 text-sm text-red-600">{clusterNameError}</p>
           )}
           <p className="mt-1 text-xs text-gray-500">
-            Must follow RFC 1123: lowercase, max 63 chars, start with letter, end with alphanumeric, only alphanumeric or '-'.
+            Must follow RFC 1123: lowercase, max 63 chars, start with letter, end with alphanumeric, only alphanumeric or dashes.
           </p>
         </div>
 
@@ -212,7 +212,7 @@ export default function GeneralStep() {
           </select>
           {isSingleNode && (
             <p className="mt-1 text-xs text-gray-500">
-              Platform Type is set to "None" for Single Node clusters
+              Platform Type is set to &quot;None&quot; for Single Node clusters
             </p>
           )}
         </div>
