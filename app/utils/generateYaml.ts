@@ -1,5 +1,75 @@
 import { FormData } from "@/app/types";
 import yaml from "js-yaml";
+import { platform } from "os";
+
+export function generateInstallConfigYAML(formData: FormData): string {
+  const installConfig: any = {
+    pullSecret: "PULL_SECRET_CHANGE_ME", // This would typically be filled with a valid pull secret
+    apiVersion: "v1",
+    baseDomain: formData.clusterDomain,
+    metadata: {
+      name: formData.clusterName,
+    },
+    compute: [
+      {
+        name: "worker",
+        replicas: formData.nodes.filter((node) => node.role === "Application").length,
+      },
+    ],
+    controlPlane: {
+      name: "master",
+      replicas: formData.nodes.filter((node) => node.role === "Control Plane").length,
+    },
+    networking: {
+      networkType: "OVN-Kubernetes",
+      clusterNetwork: [
+        {
+          cidr: formData.totalClusterNetworkCIDR,
+          hostPrefix: formData.clusterNetworkHostPrefix,
+        },
+      ],
+      serviceNetwork: [formData.serviceNetworkCIDR],
+    },
+    fips: false,
+    sshKey: formData.sshPublicKeys ? formData.sshPublicKeys.join("\n") : undefined,
+    proxy: formData.httpProxy || formData.httpsProxy || formData.noProxy ? {
+      httpProxy: formData.httpProxy || undefined,
+      httpsProxy: formData.httpsProxy || undefined,
+      noProxy: formData.noProxy || undefined,
+    } : undefined,
+    additionalTrustBundle: formData.additionalTrustedRootCAs || undefined,
+    additionalTrustBundlePolicy: formData.additionalTrustedRootCAs ? "Always" : undefined,
+  };
+
+  if (formData.platformType === "Bare Metal") {
+    installConfig.platform = {
+      baremetal: {
+        apiVIPs: formData.apiVIP ? [formData.apiVIP] : [],
+        ingressVIPs: formData.ingressVIP ? [formData.ingressVIP] : [],
+      },
+    };
+  } else if (formData.platformType === "vSphere") {
+    installConfig.platform = {
+      vsphere: {
+        apiVIPs: formData.apiVIP ? [formData.apiVIP] : [],
+        ingressVIPs: formData.ingressVIP ? [formData.ingressVIP] : [],
+        vCenter: {
+          host: "vcenter.example.com", // Placeholder, should be replaced with actual data
+          username: "vcenter-username", // Placeholder, should be replaced with actual data
+          password: "vcenter-password", // Placeholder, should be replaced with actual data
+          datacenters: ["Datacenter"], // Placeholder, should be replaced with actual data
+          defaultDatastore: "Datastore", // Placeholder, should be replaced with actual data
+        },
+      },
+    };
+  } else if (formData.platformType === "None") {
+    installConfig.platform = {
+      none: {},
+    };
+  }
+
+  return yaml.dump(installConfig);
+}
 
 export function generateYaml(formData: FormData): string {
   const yamlData: any = {

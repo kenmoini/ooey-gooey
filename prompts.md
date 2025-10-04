@@ -172,3 +172,11 @@ On the Host Networking page, if the Interface type is a bridge, the Ports dropdo
 ```
 On the Host Networking page, if the Interface type is a VLAN, the Base Interface list should not include devices that are defined as ports in other Bond interfaces.
 ```
+
+```
+On the Networking page, if the Cluster Type is "Single Node" then hide the input fields for the API VIP and Ingress VIP.  Instead display an instruction to the user that the API VIP and Ingress VIP are not used with SIngle Node deployments and only the Node IP is needed.
+```
+
+```
+On the Host Configuration page, for each defined host show a checkbox for "Installation Device: Auto" and when unchecked it displays a text input field for the installation device path.
+```

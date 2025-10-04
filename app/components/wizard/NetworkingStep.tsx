@@ -42,6 +42,23 @@ export default function NetworkingStep() {
       <h2 className="text-2xl font-bold">Networking Configuration</h2>
 
       <div className="space-y-4">
+
+        {formData.clusterType === "Single Node" ? (
+          <div className="pb-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+            <div className="flex items-start gap-3">
+              <svg className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <h3 className="text-sm font-semibold text-blue-900 mb-1">Single Node Deployment</h3>
+                <p className="text-sm text-blue-800">
+                  API VIP and Ingress VIP are not used with Single Node deployments. Only the Node IP address is needed, which should be configured in the Host Networking section.
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
         <div className="pb-4">
           <label htmlFor="loadBalancerType" className="block text-sm font-medium mb-2">
             Load Balancer Type
@@ -61,37 +78,38 @@ export default function NetworkingStep() {
             ))}
           </select>
         </div>
-
         <hr className="pt-4" />
-        <div>
-          <label htmlFor="apiVIP" className="block text-sm font-medium mb-2">
-            API VIP
-            <br /><span className="text-gray-400" title="Virtual IP for the API server">DNS A Record matching <span className="font-mono">api.{formData.clusterName}.{formData.clusterDomain}</span></span>
-          </label>
-          <input
-            id="apiVIP"
-            type="text"
-            value={formData.apiVIP}
-            onChange={(e) => updateFormData({ apiVIP: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter API VIP address"
-          />
-        </div>
+            <div>
+              <label htmlFor="apiVIP" className="block text-sm font-medium mb-2">
+                API VIP
+                <br /><span className="text-gray-400" title="Virtual IP for the API server">DNS A Record matching <span className="font-mono">api.{formData.clusterName}.{formData.clusterDomain}</span></span>
+              </label>
+              <input
+                id="apiVIP"
+                type="text"
+                value={formData.apiVIP}
+                onChange={(e) => updateFormData({ apiVIP: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter API VIP address"
+              />
+            </div>
 
-        <div className="pb-4">
-          <label htmlFor="ingressVIP" className="block text-sm font-medium mb-2">
-            Ingress VIP
-            <br /><span className="text-gray-400" title="Virtual IP for the API server">DNS A Record matching <span className="font-mono">*.apps.{formData.clusterName}.{formData.clusterDomain}</span></span>
-          </label>
-          <input
-            id="ingressVIP"
-            type="text"
-            value={formData.ingressVIP}
-            onChange={(e) => updateFormData({ ingressVIP: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter Ingress VIP address"
-          />
-        </div>
+            <div className="pb-4">
+              <label htmlFor="ingressVIP" className="block text-sm font-medium mb-2">
+                Ingress VIP
+                <br /><span className="text-gray-400" title="Virtual IP for the API server">DNS A Record matching <span className="font-mono">*.apps.{formData.clusterName}.{formData.clusterDomain}</span></span>
+              </label>
+              <input
+                id="ingressVIP"
+                type="text"
+                value={formData.ingressVIP}
+                onChange={(e) => updateFormData({ ingressVIP: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter Ingress VIP address"
+              />
+            </div>
+          </>
+        )}
 
 
         <hr className="pt-4" />

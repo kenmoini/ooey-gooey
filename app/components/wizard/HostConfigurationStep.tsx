@@ -116,6 +116,64 @@ export default function HostConfigurationStep() {
                 {isExpanded && (
                   <div className="px-6 pb-6 pt-2 border-t border-gray-300 bg-gray-50">
                     <div className="space-y-4">
+                      <div className="grid grid-cols-9 gap-2 pt-4">
+                      <div className="grid grid-cols-2 col-span-4 gap-2 pt-4">
+                        <div className="col-span-1">
+                          <label htmlFor={`auto-install-${node.id}`} className="block text-sm font-medium mb-2">
+                            Installation Device
+                          </label>
+                        </div>
+                        <div className="col-span-1 items-right align-right space-y-2">
+                          <div className="flex items-right gap-2">
+                            <input
+                              type="checkbox"
+                              id={`auto-install-${node.id}`}
+                              checked={node.installationDeviceAuto ?? true}
+                              onChange={(e) => {
+                                const updatedNodes = formData.nodes.map((n) => {
+                                  if (n.id === node.id) {
+                                    return {
+                                      ...n,
+                                      installationDeviceAuto: e.target.checked,
+                                      installationDevicePath: e.target.checked ? undefined : n.installationDevicePath,
+                                    };
+                                  }
+                                  return n;
+                                });
+                                updateFormData({ nodes: updatedNodes });
+                              }}
+                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                            <label htmlFor={`auto-install-${node.id}`} className="text-sm ml-2">
+                              Auto
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                          <div className="col-span-4 col-start-6">
+                          {!(node.installationDeviceAuto ?? true) && (
+                            <input
+                              type="text"
+                              value={node.installationDevicePath || ""}
+                              onChange={(e) => {
+                                const updatedNodes = formData.nodes.map((n) => {
+                                  if (n.id === node.id) {
+                                    return {
+                                      ...n,
+                                      installationDevicePath: e.target.value,
+                                    };
+                                  }
+                                  return n;
+                                });
+                                updateFormData({ nodes: updatedNodes });
+                              }}
+                              className="px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Installation device path (e.g., /dev/sda)"
+                            />
+                          )}
+                        </div>
+                      </div>
+
                       <div>
                         <label className="block text-sm font-medium mb-2">
                           Network Interfaces

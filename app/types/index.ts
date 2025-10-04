@@ -30,6 +30,8 @@ export interface Node {
   name: string;
   role?: NodeRole;
   interfaces?: NetworkInterface[];
+  installationDeviceAuto?: boolean;
+  installationDevicePath?: string;
 }
 
 export interface RegistryMapping {
@@ -89,3 +91,64 @@ export const initialFormData: FormData = {
   sshPublicKeys: [],
   additionalTrustedRootCAs: "",
 };
+
+
+export interface InstallConfig {
+  apiVersion: "v1";
+  metadata: {
+    name: string;
+  }
+  baseDomain: string;
+  compute?: Array<{
+    name: string;
+    replicas: number;
+  }>;
+  controlPlane: {
+    name: string;
+    replicas: number;
+  };
+  networking: {
+    networkType?: string;
+    clusterNetwork?: Array<{
+      cidr: string;
+      hostPrefix: number;
+    }>;
+    serviceNetwork: string[];
+    machineNetwork?: Array<{
+      cidr: string;
+    }>;
+  };
+  platform: {
+    none?: {};
+    baremetal?: {
+      apiVIPs: string[];
+      ingressVIPs: string[];
+    };
+    vsphere?: {
+      apiVIPs: string[];
+      ingressVIPs: string[];
+      vCenter: {
+        host: string;
+        username: string;
+        password: string;
+        datacenters: string[];
+        defaultDatastore: string;
+        cluster?: string;
+      };
+    };
+  };
+  pullSecret?: string;
+  sshKey?: string;
+  fips: boolean;
+  proxy?: {
+    httpProxy?: string;
+    httpsProxy?: string;
+    noProxy?: string;
+  };
+  additionalTrustBundle?: string;
+  additionalTrustBundlePolicy?: string;
+  imageContentSources?: Array<{
+    source: string;
+    mirrors: string[];
+  }>;
+}
