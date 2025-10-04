@@ -152,3 +152,23 @@ On the Host Networking page, if the interface type is VLAN, then display an inpu
 ```
 On the Host Networking page, if the interface type is VLAN, reconstruct the interface name with the Base Interface name and VLAN ID in the format of "name.id"
 ```
+
+```
+On the Host Networking page, add a button to remove a defined interface unless it is an Ethernet type interface.
+```
+
+```
+On the Host Networking page, if the Interface is a Bridge type display a Ports input, copy the logic of the Port input for a Bond type interface.
+```
+
+```
+On the Host Networking page, for Bridge type interfaces, in the Ports input only show options that are not defined as Ports for other Bonds and Bridges.
+```
+
+```
+On the Host Networking page, if the Interface type is a bridge, the Ports dropdown should include other bonds so long as they are not defined as ports in other bridge interfaces.
+```
+
+```
+On the Host Networking page, if the Interface type is a VLAN, the Base Interface list should not include devices that are defined as ports in other Bond interfaces.
+```

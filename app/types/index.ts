@@ -20,6 +20,7 @@ export interface NetworkInterface {
   mtu?: number;
   bondPorts?: string[];
   bondingMode?: BondingMode;
+  bridgePorts?: string[];
   vlanBaseInterface?: string;
   vlanId?: number;
 }

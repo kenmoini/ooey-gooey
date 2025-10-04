@@ -24,6 +24,7 @@ export default function HostConfigurationStep() {
   const addInterface = (nodeId: string) => {
     const deviceName = deviceNames[nodeId]?.trim();
     const macAddress = macAddresses[nodeId]?.trim();
+    const type = "Ethernet";
 
     if (deviceName && macAddress) {
       // Check if interface name already exists for this node
@@ -41,6 +42,7 @@ export default function HostConfigurationStep() {
         id: Date.now().toString(),
         deviceName,
         macAddress,
+        type: type,
       };
 
       const updatedNodes = formData.nodes.map((node) => {

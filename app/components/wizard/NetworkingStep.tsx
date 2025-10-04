@@ -66,6 +66,7 @@ export default function NetworkingStep() {
         <div>
           <label htmlFor="apiVIP" className="block text-sm font-medium mb-2">
             API VIP
+            <br /><span className="text-gray-400" title="Virtual IP for the API server">DNS A Record matching <span className="font-mono">api.{formData.clusterName}.{formData.clusterDomain}</span></span>
           </label>
           <input
             id="apiVIP"
@@ -80,6 +81,7 @@ export default function NetworkingStep() {
         <div className="pb-4">
           <label htmlFor="ingressVIP" className="block text-sm font-medium mb-2">
             Ingress VIP
+            <br /><span className="text-gray-400" title="Virtual IP for the API server">DNS A Record matching <span className="font-mono">*.apps.{formData.clusterName}.{formData.clusterDomain}</span></span>
           </label>
           <input
             id="ingressVIP"

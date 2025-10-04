@@ -11,6 +11,8 @@ export default function HostNetworkingStep() {
   const [showAddInterfaceMenu, setShowAddInterfaceMenu] = useState<{ [nodeId: string]: boolean }>({});
   const [bondPortInput, setBondPortInput] = useState<{ [interfaceId: string]: string }>({});
   const [showBondPortSuggestions, setShowBondPortSuggestions] = useState<{ [interfaceId: string]: boolean }>({});
+  const [bridgePortInput, setBridgePortInput] = useState<{ [interfaceId: string]: string }>({});
+  const [showBridgePortSuggestions, setShowBridgePortSuggestions] = useState<{ [interfaceId: string]: boolean }>({});
 
   const toggleNode = (nodeId: string) => {
     const newExpanded = new Set(expandedNodes);
@@ -35,7 +37,7 @@ export default function HostNetworkingStep() {
   const updateInterface = (
     nodeId: string,
     interfaceId: string,
-    field: "state" | "type" | "enableIPv4" | "enableIPv4DHCP" | "ipv4Address" | "enableIPv6" | "mtu" | "bondPorts" | "bondingMode" | "vlanBaseInterface" | "vlanId",
+    field: "state" | "type" | "enableIPv4" | "enableIPv4DHCP" | "ipv4Address" | "enableIPv6" | "mtu" | "bondPorts" | "bondingMode" | "bridgePorts" | "vlanBaseInterface" | "vlanId",
     value: InterfaceState | InterfaceType | BondingMode | boolean | number | string | string[]
   ) => {
     const updatedNodes = formData.nodes.map((node) => {
@@ -44,7 +46,19 @@ export default function HostNetworkingStep() {
           ...node,
           interfaces: node.interfaces?.map((iface) => {
             if (iface.id === interfaceId) {
-              return { ...iface, [field]: value };
+              const updatedIface = { ...iface, [field]: value };
+
+              // Auto-update VLAN interface name when base interface or VLAN ID changes
+              if (updatedIface.type === "VLAN") {
+                const baseInterface = field === "vlanBaseInterface" ? value as string : updatedIface.vlanBaseInterface;
+                const vlanId = field === "vlanId" ? value as number : updatedIface.vlanId;
+
+                if (baseInterface && vlanId) {
+                  updatedIface.deviceName = `${baseInterface}.${vlanId}`;
+                }
+              }
+
+              return updatedIface;
             }
             return iface;
           }),
@@ -84,6 +98,25 @@ export default function HostNetworkingStep() {
 
     updateFormData({ nodes: updatedNodes });
     setShowAddInterfaceMenu({ ...showAddInterfaceMenu, [nodeId]: false });
+  };
+
+  const removeInterface = (nodeId: string, interfaceId: string) => {
+    const updatedNodes = formData.nodes.map((node) => {
+      if (node.id === nodeId) {
+        return {
+          ...node,
+          interfaces: node.interfaces?.filter((iface) => iface.id !== interfaceId),
+        };
+      }
+      return node;
+    });
+
+    updateFormData({ nodes: updatedNodes });
+    setExpandedInterfaces((prev) => {
+      const newExpanded = new Set(prev);
+      newExpanded.delete(interfaceId);
+      return newExpanded;
+    });
   };
 
   return (
@@ -141,33 +174,52 @@ export default function HostNetworkingStep() {
                           const isInterfaceExpanded = expandedInterfaces.has(iface.id);
                           return (
                             <div key={iface.id} className="border border-gray-200 rounded-md bg-white">
-                              <button
-                                type="button"
-                                onClick={() => toggleInterface(iface.id)}
-                                className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50"
-                              >
-                                <div className="flex items-center gap-4">
-                                  <div>
-                                    <span className="font-mono font-semibold">{iface.deviceName}</span>
-                                  </div>
-                                  <div className="text-sm text-gray-500">
-                                    {iface.macAddress}
-                                  </div>
-                                  <div>
-                                    <span className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded">
-                                      {iface.type || "Ethernet"}
-                                    </span>
-                                  </div>
-                                </div>
-                                <svg
-                                  className={`w-5 h-5 transition-transform ${isInterfaceExpanded ? "rotate-180" : ""}`}
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
+                              <div className="flex items-center">
+                                <button
+                                  type="button"
+                                  onClick={() => toggleInterface(iface.id)}
+                                  className="flex-1 flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50"
                                 >
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                              </button>
+                                  <div className="flex items-center gap-4">
+                                    <div>
+                                      <span className="font-mono font-semibold">{iface.deviceName}</span>
+                                    </div>
+                                    <div className="text-sm text-gray-500">
+                                      {iface.macAddress}
+                                    </div>
+                                    <div>
+                                      <span className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded">
+                                        {iface.type || "Ethernet"}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <svg
+                                    className={`w-5 h-5 transition-transform ${isInterfaceExpanded ? "rotate-180" : ""}`}
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                  </svg>
+                                </button>
+                                {(!iface.type || iface.type !== "Ethernet") && (
+                                  <button
+                                    type="button"
+                                    onClick={() => removeInterface(node.id, iface.id)}
+                                    className="px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                    title="Remove interface"
+                                  >
+                                    <svg
+                                      className="w-5 h-5"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                  </button>
+                                )}
+                              </div>
 
                               {isInterfaceExpanded && (
                                 <div className="px-4 pb-4 pt-2 border-t border-gray-200">
@@ -295,6 +347,120 @@ export default function HostNetworkingStep() {
                                           </>
                                         )}
 
+                                        {(iface.type === "Bridge") && (
+                                          <>
+                                            <div className="relative">
+                                              <label className="block text-sm font-medium mb-1">
+                                                Ports
+                                              </label>
+                                              <div className="mb-2">
+                                                {iface.bridgePorts && iface.bridgePorts.length > 0 && (
+                                                  <div className="flex flex-wrap gap-2 mb-2">
+                                                    {iface.bridgePorts.map((port) => (
+                                                      <span
+                                                        key={port}
+                                                        className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm"
+                                                      >
+                                                        {port}
+                                                        <button
+                                                          type="button"
+                                                          onClick={() => {
+                                                            const newPorts = iface.bridgePorts?.filter(p => p !== port) || [];
+                                                            updateInterface(node.id, iface.id, "bridgePorts", newPorts);
+                                                          }}
+                                                          className="hover:bg-blue-200 rounded"
+                                                        >
+                                                          ×
+                                                        </button>
+                                                      </span>
+                                                    ))}
+                                                  </div>
+                                                )}
+                                                <input
+                                                  type="text"
+                                                  value={bridgePortInput[iface.id] || ""}
+                                                  onChange={(e) => setBridgePortInput({ ...bridgePortInput, [iface.id]: e.target.value })}
+                                                  onFocus={() => setShowBridgePortSuggestions({ ...showBridgePortSuggestions, [iface.id]: true })}
+                                                  onBlur={() => {
+                                                    setTimeout(() => {
+                                                      setShowBridgePortSuggestions({ ...showBridgePortSuggestions, [iface.id]: false });
+                                                    }, 200);
+                                                  }}
+                                                  placeholder="Type to search and add ports..."
+                                                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                              </div>
+                                              {showBridgePortSuggestions[iface.id] && (
+                                                <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                                                  {node.interfaces
+                                                    ?.filter(i => !i.type || i.type === "Ethernet" || i.type === "Bond" || i.type === "VLAN")
+                                                    .filter(candidateIface => {
+                                                      const searchTerm = (bridgePortInput[iface.id] || "").toLowerCase();
+                                                      const deviceMatch = candidateIface.deviceName.toLowerCase().includes(searchTerm);
+                                                      const macMatch = candidateIface.macAddress.toLowerCase().includes(searchTerm);
+                                                      const notAlreadySelected = !(iface.bridgePorts || []).includes(candidateIface.deviceName);
+
+                                                      // For Ethernet: exclude if used in other Bonds or Bridges
+                                                      // For Bond: exclude only if used in other Bridges
+                                                      const usedInOtherInterface = node.interfaces?.some(
+                                                        otherIface => otherIface.id !== iface.id && (
+                                                          ((!candidateIface.type || candidateIface.type === "Ethernet") && otherIface.bondPorts?.includes(candidateIface.deviceName)) ||
+                                                          otherIface.bridgePorts?.includes(candidateIface.deviceName)
+                                                        )
+                                                      );
+                                                      return (deviceMatch || macMatch) && notAlreadySelected && !usedInOtherInterface;
+                                                    })
+                                                    .map(candidateIface => (
+                                                      <button
+                                                        key={candidateIface.id}
+                                                        type="button"
+                                                        onClick={() => {
+                                                          const newPorts = [...(iface.bridgePorts || []), candidateIface.deviceName];
+                                                          updateInterface(node.id, iface.id, "bridgePorts", newPorts);
+                                                          setBridgePortInput({ ...bridgePortInput, [iface.id]: "" });
+                                                        }}
+                                                        className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                                                      >
+                                                        <div className="font-mono text-sm">
+                                                          {candidateIface.deviceName}
+                                                          {candidateIface.type === "Bond" && (
+                                                            <span className="ml-2 px-1.5 py-0.5 text-xs bg-purple-100 text-purple-800 rounded">Bond</span>
+                                                          )}
+                                                          {candidateIface.type === "VLAN" && (
+                                                            <span className="ml-2 px-1.5 py-0.5 text-xs bg-green-100 text-green-800 rounded">VLAN</span>
+                                                          )}
+                                                        </div>
+                                                        <div className="text-xs text-gray-500">{candidateIface.macAddress}</div>
+                                                      </button>
+                                                    ))}
+                                                  {node.interfaces
+                                                    ?.filter(i => !i.type || i.type === "Ethernet" || i.type === "Bond" || i.type === "VLAN")
+                                                    .filter(candidateIface => {
+                                                      const searchTerm = (bridgePortInput[iface.id] || "").toLowerCase();
+                                                      const deviceMatch = candidateIface.deviceName.toLowerCase().includes(searchTerm);
+                                                      const macMatch = candidateIface.macAddress.toLowerCase().includes(searchTerm);
+                                                      const notAlreadySelected = !(iface.bridgePorts || []).includes(candidateIface.deviceName);
+
+                                                      // For Ethernet: exclude if used in other Bonds or Bridges
+                                                      // For Bond: exclude only if used in other Bridges
+                                                      const usedInOtherInterface = node.interfaces?.some(
+                                                        otherIface => otherIface.id !== iface.id && (
+                                                          ((!candidateIface.type || candidateIface.type === "Ethernet") && otherIface.bondPorts?.includes(candidateIface.deviceName)) ||
+                                                          otherIface.bridgePorts?.includes(candidateIface.deviceName)
+                                                        )
+                                                      );
+                                                      return (deviceMatch || macMatch) && notAlreadySelected && !usedInOtherInterface;
+                                                    }).length === 0 && (
+                                                    <div className="px-4 py-2 text-sm text-gray-500">
+                                                      No matching interfaces found
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              )}
+                                            </div>
+                                          </>
+                                        )}
+
                                     {(iface.type === "VLAN") && (
                                       <>
                                         <div>
@@ -315,11 +481,11 @@ export default function HostNetworkingStep() {
                                                 if (i.id === iface.id) return false;
                                                 // Exclude other VLAN interfaces
                                                 if (i.type === "VLAN") return false;
-                                                // Exclude interfaces that are used as bond ports
-                                                const usedAsBondPort = node.interfaces?.some(
-                                                  bondIface => bondIface.type === "Bond" && bondIface.bondPorts?.includes(i.deviceName)
+                                                // Exclude interfaces that are used as bond or bridge ports
+                                                const usedAsPort = node.interfaces?.some(
+                                                  otherIface => (otherIface.type === "Bond" && otherIface.bondPorts?.includes(i.deviceName))
                                                 );
-                                                return !usedAsBondPort;
+                                                return !usedAsPort;
                                               })
                                               .map(baseIface => (
                                                 <option key={baseIface.id} value={baseIface.deviceName}>
