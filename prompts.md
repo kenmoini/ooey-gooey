@@ -114,5 +114,41 @@ On the Host Networking page, hide the "Type" dropdown in the interface definitio
 ```
 
 ```
-On the Host Networking page, if the interface type is "Bond" then display a Ports multiselect input field.  When focusing on the field it should display the list of Ethernet type Interfaces defined on that host.
+On the Host Networking page, if the interface type is "Bond" then display a Ports multiselect input field.  When focusing on the field it should display the list of Ethernet type Interfaces defined on that host for selection.
+```
+
+```
+On the Host Networking page, change the Ports input for the Bond interface types from a multi-select input field to a a text input field that displays the options with fuzzy matching.
+```
+
+```
+On the Host Configuration page, only display the interfaces in the list for each host if it is an Ethernet type.
+```
+
+```
+On the Host Networking page, if the interface type is "VLAN" then display a Base Interface dropdown.  The options are the other defined Interfaces on the host that are not a VLAN type.
+```
+
+```
+On the Host Networking page, if a defined interface's State is Down, hide the remaining field inputs for that Interface.
+```
+
+```
+On the Host Networking page, if an interface is a Bond type then display a dropdown for "Bonding Mode" with options "Active/Backup" and "LACP"
+```
+
+```
+On the Host Networking page, for VLAN type interfaces, in the Base Interface dropdown list, exclude interfaces that are defined as Ports on any other Bond type interfaces.
+```
+
+```
+On the Host Configuration page, when adding an interface, ensure the interface name is not already defined for that host.
+```
+
+```
+On the Host Networking page, if the interface type is VLAN, then display an input for VLAN ID after the Base Interface dropdown.
+```
+
+```
+On the Host Networking page, if the interface type is VLAN, reconstruct the interface name with the Base Interface name and VLAN ID in the format of "name.id"
 ```

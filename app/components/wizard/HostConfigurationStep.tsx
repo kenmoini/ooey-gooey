@@ -9,6 +9,7 @@ export default function HostConfigurationStep() {
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
   const [deviceNames, setDeviceNames] = useState<{ [nodeId: string]: string }>({});
   const [macAddresses, setMacAddresses] = useState<{ [nodeId: string]: string }>({});
+  const [errors, setErrors] = useState<{ [nodeId: string]: string }>({});
 
   const toggleNode = (nodeId: string) => {
     const newExpanded = new Set(expandedNodes);
@@ -25,6 +26,17 @@ export default function HostConfigurationStep() {
     const macAddress = macAddresses[nodeId]?.trim();
 
     if (deviceName && macAddress) {
+      // Check if interface name already exists for this node
+      const node = formData.nodes.find(n => n.id === nodeId);
+      const isDuplicate = node?.interfaces?.some(
+        iface => iface.deviceName.toLowerCase() === deviceName.toLowerCase()
+      );
+
+      if (isDuplicate) {
+        setErrors({ ...errors, [nodeId]: `Interface "${deviceName}" already exists for this host.` });
+        return;
+      }
+
       const newInterface: NetworkInterface = {
         id: Date.now().toString(),
         deviceName,
@@ -44,6 +56,7 @@ export default function HostConfigurationStep() {
       updateFormData({ nodes: updatedNodes });
       setDeviceNames({ ...deviceNames, [nodeId]: "" });
       setMacAddresses({ ...macAddresses, [nodeId]: "" });
+      setErrors({ ...errors, [nodeId]: "" });
     }
   };
 
@@ -85,11 +98,6 @@ export default function HostConfigurationStep() {
                     {node.role && (
                       <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
                         {node.role}
-                      </span>
-                    )}
-                    {node.interfaces && node.interfaces.length > 0 && (
-                      <span className="text-sm text-gray-500">
-                        ({node.interfaces.length} interface{node.interfaces.length !== 1 ? 's' : ''})
                       </span>
                     )}
                   </div>
@@ -137,11 +145,16 @@ export default function HostConfigurationStep() {
                             Add Interface
                           </button>
                             </div>
+                          {errors[node.id] && (
+                            <div className="mt-2 text-sm text-red-600">
+                              {errors[node.id]}
+                            </div>
+                          )}
                         </div>
 
-                        {node.interfaces && node.interfaces.length > 0 && (
+                        {node.interfaces && node.interfaces.filter(i => !i.type || i.type === "Ethernet").length > 0 && (
                           <div className="mt-4 space-y-2">
-                            {node.interfaces.map((iface) => (
+                            {node.interfaces.filter(i => !i.type || i.type === "Ethernet").map((iface) => (
                               <div
                                 key={iface.id}
                                 className="flex items-center justify-between p-3 bg-white rounded-md border border-gray-200"

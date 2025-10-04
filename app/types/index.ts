@@ -5,6 +5,7 @@ export type PlatformType = "Bare Metal" | "vSphere" | "None";
 
 export type InterfaceState = "Up" | "Down";
 export type InterfaceType = "Ethernet" | "Bond" | "Bridge" | "VLAN";
+export type BondingMode = "Active/Backup" | "LACP";
 
 export interface NetworkInterface {
   id: string;
@@ -17,6 +18,10 @@ export interface NetworkInterface {
   ipv4Address?: string;
   enableIPv6?: boolean;
   mtu?: number;
+  bondPorts?: string[];
+  bondingMode?: BondingMode;
+  vlanBaseInterface?: string;
+  vlanId?: number;
 }
 
 export interface Node {
