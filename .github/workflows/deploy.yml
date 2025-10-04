@@ -41,6 +41,7 @@ jobs:
           mkdir nout
           mv out nout/abi-gui
           mv nout out
+          cp public/index.html out/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
