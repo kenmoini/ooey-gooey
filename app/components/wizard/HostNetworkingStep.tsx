@@ -242,9 +242,19 @@ export default function HostNetworkingStep() {
                     <div className="flex items-center gap-3">
                       <span className="font-semibold text-lg">{node.name}</span>
                       {node.role && (
-                        <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
-                          {node.role}
-                        </span>
+                        <>
+                          {node.role === "Control Plane" && (
+                          <span className="px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded">
+                            {node.role}
+                          </span>
+                        )}
+                        {node.role === "Application" && (
+                          <span className="px-2 py-1 text-xs text-green-800 bg-green-100 rounded">
+                            {node.role}
+                          </span>
+                          
+                        )}
+                        </>
                       )}
                       {node.interfaces && node.interfaces.length > 0 && (
                         <span className="text-sm text-gray-500">
