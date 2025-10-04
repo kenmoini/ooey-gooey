@@ -128,6 +128,22 @@ export default function HostNetworkingStep() {
     setInterfaceToRemove(null);
   };
 
+  const toggleDefaultRoute = (nodeId: string, interfaceId: string) => {
+    const updatedNodes = formData.nodes.map((node) => {
+      if (node.id === nodeId) {
+        return {
+          ...node,
+          interfaces: node.interfaces?.map((iface) => ({
+            ...iface,
+            defaultRoute: iface.id === interfaceId ? !iface.defaultRoute : false,
+          })),
+        };
+      }
+      return node;
+    });
+    updateFormData({ nodes: updatedNodes });
+  };
+
   const getEligibleNodesForCopy = (sourceNodeId: string, iface: any) => {
     return formData.nodes.filter((node) => {
       // Don't include the source node
@@ -352,6 +368,18 @@ export default function HostNetworkingStep() {
                                       <span className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded">
                                         {iface.type || "Ethernet"}
                                       </span>
+                                    </div>
+                                    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                                      <input
+                                        type="radio"
+                                        id={`default-route-${node.id}-${iface.id}`}
+                                        checked={iface.defaultRoute ?? false}
+                                        onChange={() => toggleDefaultRoute(node.id, iface.id)}
+                                        className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                      />
+                                      <label htmlFor={`default-route-${node.id}-${iface.id}`} className="text-sm text-gray-700">
+                                        Default Route
+                                      </label>
                                     </div>
                                   </div>
                                   <svg

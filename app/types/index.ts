@@ -23,6 +23,7 @@ export interface NetworkInterface {
   bridgePorts?: string[];
   vlanBaseInterface?: string;
   vlanId?: number;
+  defaultRoute?: boolean;
 }
 
 export interface Node {

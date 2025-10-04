@@ -231,3 +231,7 @@ In the HostNetworkingStep.tsx file, when progressing to the next step, validate 
 # Plan Mode
 We need to take this application and generate a static site for hosting on GitHub Pages.
 ```
+
+```
+In HostNetworkingStep.tsx add a Radio toggle option in the list of defined interfaces for "Default Route", there should only be one Default Route interface per Host, when a new interface is toggled as the Default Route interface the others should be untoggled.
+```
