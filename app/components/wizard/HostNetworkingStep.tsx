@@ -133,6 +133,9 @@ export default function HostNetworkingStep() {
       // Don't include the source node
       if (node.id === sourceNodeId) return false;
 
+      // Exclude nodes that already have an interface with the same name
+      if (node.interfaces?.some(i => i.deviceName === iface.deviceName)) return false;
+
       // For VLAN interfaces, check if target node has matching base interface
       if (iface.type === "VLAN") {
         if (!iface.vlanBaseInterface) return false;
@@ -162,14 +165,25 @@ export default function HostNetworkingStep() {
   const copyInterfaceToNode = (sourceNodeId: string, interfaceId: string, targetNodeId: string) => {
     const sourceNode = formData.nodes.find(n => n.id === sourceNodeId);
     const sourceInterface = sourceNode?.interfaces?.find(i => i.id === interfaceId);
+    const targetNode = formData.nodes.find(n => n.id === targetNodeId);
 
-    if (!sourceInterface) return;
+    if (!sourceInterface || !targetNode) return;
 
-    // Create a copy of the interface with a new ID
+    // Create a copy of the interface with a new ID and without the IPv4 address
     const newInterface = {
       ...sourceInterface,
       id: Date.now().toString(),
     };
+
+    // For VLAN interfaces, map the base interface to the matching named interface on the target host
+    if (sourceInterface.type === "VLAN" && sourceInterface.vlanBaseInterface) {
+      const matchingBaseInterface = targetNode.interfaces?.find(
+        i => i.deviceName === sourceInterface.vlanBaseInterface
+      );
+      if (matchingBaseInterface) {
+        newInterface.vlanBaseInterface = matchingBaseInterface.deviceName;
+      }
+    }
 
     const updatedNodes = formData.nodes.map((node) => {
       if (node.id === targetNodeId) {
