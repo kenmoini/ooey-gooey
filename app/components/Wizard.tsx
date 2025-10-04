@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormContext } from "@/app/context/FormContext";
+import { useState } from "react";
 import GeneralStep from "./wizard/GeneralStep";
 import HostConfigurationStep from "./wizard/HostConfigurationStep";
 import HostNetworkingStep from "./wizard/HostNetworkingStep";
@@ -22,16 +23,53 @@ const steps = [
 ];
 
 export default function Wizard() {
-  const { currentStep, setCurrentStep } = useFormContext();
+  const { formData, currentStep, setCurrentStep } = useFormContext();
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const CurrentStepComponent = steps[currentStep].component;
 
+  const validateHostNetworking = (): string[] => {
+    const errors: string[] = [];
+    const ipAddresses = new Set<string>();
+
+    formData.nodes.forEach((node) => {
+      node.interfaces?.forEach((iface) => {
+        // Check if IPv4 is enabled with DHCP disabled but no IP address
+        if (iface.enableIPv4 && iface.enableIPv4DHCP === false && !iface.ipv4Address) {
+          errors.push(`${node.name} - ${iface.deviceName}: IPv4 DHCP is disabled but no IP address is defined`);
+        }
+
+        // Check for duplicate IP addresses
+        if (iface.ipv4Address) {
+          if (ipAddresses.has(iface.ipv4Address)) {
+            errors.push(`Duplicate IP address ${iface.ipv4Address} found on ${node.name} - ${iface.deviceName}`);
+          } else {
+            ipAddresses.add(iface.ipv4Address);
+          }
+        }
+      });
+    });
+
+    return errors;
+  };
+
   const handleNext = () => {
+    // Validate Host Networking step before proceeding
+    if (currentStep === 4) { // Host Networking is step index 4
+      const errors = validateHostNetworking();
+      if (errors.length > 0) {
+        setValidationErrors(errors);
+        return;
+      }
+    }
+
+    setValidationErrors([]);
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     }
   };
 
   const handlePrevious = () => {
+    setValidationErrors([]);
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
@@ -78,6 +116,18 @@ export default function Wizard() {
       <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
         <CurrentStepComponent />
       </div>
+
+      {/* Validation Errors */}
+      {validationErrors.length > 0 && (
+        <div className="bg-red-50 border border-red-300 rounded-lg p-4 mb-8">
+          <h3 className="text-red-800 font-semibold mb-2">Validation Errors:</h3>
+          <ul className="list-disc list-inside text-red-700 space-y-1">
+            {validationErrors.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Navigation buttons */}
       <div className="flex justify-between">

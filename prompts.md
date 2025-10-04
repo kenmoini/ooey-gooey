@@ -220,3 +220,10 @@ In the HostNetworkingStep.tsx file, move the per-host Add Interface button and d
 ```
 In the HostNetworkingStep.tsx file, when setting the Ports for a Bond, don't list any Ports that have been defined for other Bond interfaces on that host.
 ```
+
+```
+In the HostNetworkingStep.tsx file, when progressing to the next step, validate that:
+- Any interface with IPv4 DHCP disabled has an IP address defined
+- IPv4 IP addresses are defined only once across interfaces and hosts
+```
+
