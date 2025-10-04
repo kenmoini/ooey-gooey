@@ -30,7 +30,7 @@ export function generateInstallConfigYAML(formData: FormData): string {
       ],
       serviceNetwork: [formData.serviceNetworkCIDR],
     },
-    fips: false,
+    fips: formData.fipsMode || false,
     sshKey: formData.sshPublicKeys ? formData.sshPublicKeys.join("\n") : undefined,
     proxy: formData.httpProxy || formData.httpsProxy || formData.noProxy ? {
       httpProxy: formData.httpProxy || undefined,
@@ -66,6 +66,25 @@ export function generateInstallConfigYAML(formData: FormData): string {
     installConfig.platform = {
       none: {},
     };
+  }
+
+  if (formData.configureDisconnectedRegistries) {
+    installConfig.imageContentSources = [
+        {
+          source: "quay.io/openshift-release-dev/ocp-release",
+          mirrors: [formData.releaseImageRegistry],
+        },
+        {
+          source: "quay.io/openshift-release-dev/ocp-v4.0-art-dev",
+          mirrors: [formData.platformImagesRegistry],
+        },
+    ];
+    formData.registryMappings.forEach((mapping) => {
+      installConfig.imageContentSources.push({
+        source: mapping.sourceRegistry,
+        mirrors: [mapping.mirrorRegistry],
+      });
+    });
   }
 
   return yaml.dump(installConfig);

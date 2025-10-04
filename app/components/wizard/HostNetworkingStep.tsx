@@ -185,6 +185,26 @@ export default function HostNetworkingStep() {
       }
     }
 
+    // For Bond interfaces, map the ports to the matching named interfaces on the target host
+    if (sourceInterface.type === "Bond" && sourceInterface.bondPorts) {
+      newInterface.bondPorts = sourceInterface.bondPorts
+        .map(portName => {
+          const matchingPort = targetNode.interfaces?.find(i => i.deviceName === portName);
+          return matchingPort ? matchingPort.deviceName : null;
+        })
+        .filter((port): port is string => port !== null);
+    }
+
+    // For Bridge interfaces, map the ports to the matching named interfaces on the target host
+    if (sourceInterface.type === "Bridge" && sourceInterface.bridgePorts) {
+      newInterface.bridgePorts = sourceInterface.bridgePorts
+        .map(portName => {
+          const matchingPort = targetNode.interfaces?.find(i => i.deviceName === portName);
+          return matchingPort ? matchingPort.deviceName : null;
+        })
+        .filter((port): port is string => port !== null);
+    }
+
     const updatedNodes = formData.nodes.map((node) => {
       if (node.id === targetNodeId) {
         return {
@@ -213,33 +233,82 @@ export default function HostNetworkingStep() {
             const isNodeExpanded = expandedNodes.has(node.id);
             return (
               <div key={node.id} className="border border-gray-300 rounded-md">
-                <button
-                  type="button"
-                  onClick={() => toggleNode(node.id)}
-                  className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="font-semibold text-lg">{node.name}</span>
-                    {node.role && (
-                      <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
-                        {node.role}
-                      </span>
-                    )}
-                    {node.interfaces && node.interfaces.length > 0 && (
-                      <span className="text-sm text-gray-500">
-                        ({node.interfaces.length} interface{node.interfaces.length !== 1 ? 's' : ''})
-                      </span>
+                <div className="flex items-center">
+                  <button
+                    type="button"
+                    onClick={() => toggleNode(node.id)}
+                    className="flex-1 flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="font-semibold text-lg">{node.name}</span>
+                      {node.role && (
+                        <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
+                          {node.role}
+                        </span>
+                      )}
+                      {node.interfaces && node.interfaces.length > 0 && (
+                        <span className="text-sm text-gray-500">
+                          ({node.interfaces.length} interface{node.interfaces.length !== 1 ? 's' : ''})
+                        </span>
+                      )}
+                    </div>
+                    <svg
+                      className={`w-6 h-6 transition-transform ${isNodeExpanded ? "rotate-180" : ""}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowAddInterfaceMenu({ ...showAddInterfaceMenu, [node.id]: !showAddInterfaceMenu[node.id] });
+                      }}
+                      className="px-4 py-4 text-green-600 hover:bg-green-50 hover:text-green-700"
+                      title="Add interface"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                    </button>
+                    {showAddInterfaceMenu[node.id] && (
+                      <div className="absolute right-0 mt-1 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-20">
+                        <div className="px-3 py-2 text-xs font-semibold text-gray-500 border-b">
+                          Add interface:
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => addInterface(node.id, "Bond")}
+                          className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                        >
+                          Bond
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => addInterface(node.id, "VLAN")}
+                          className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                        >
+                          VLAN
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => addInterface(node.id, "Bridge")}
+                          className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                        >
+                          Bridge
+                        </button>
+                      </div>
                     )}
                   </div>
-                  <svg
-                    className={`w-6 h-6 transition-transform ${isNodeExpanded ? "rotate-180" : ""}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
+                </div>
 
                 {isNodeExpanded && (
                   <div className="px-6 pb-6 pt-2 border-t border-gray-300 bg-gray-50">
@@ -438,7 +507,13 @@ export default function HostNetworkingStep() {
                                                       const deviceMatch = ethernetIface.deviceName.toLowerCase().includes(searchTerm);
                                                       const macMatch = ethernetIface.macAddress.toLowerCase().includes(searchTerm);
                                                       const notAlreadySelected = !(iface.bondPorts || []).includes(ethernetIface.deviceName);
-                                                      return (deviceMatch || macMatch) && notAlreadySelected;
+
+                                                      // Exclude if used in other Bond interfaces
+                                                      const usedInOtherBond = node.interfaces?.some(
+                                                        otherIface => otherIface.id !== iface.id && otherIface.type === "Bond" && otherIface.bondPorts?.includes(ethernetIface.deviceName)
+                                                      );
+
+                                                      return (deviceMatch || macMatch) && notAlreadySelected && !usedInOtherBond;
                                                     })
                                                     .map(ethernetIface => (
                                                       <button
@@ -462,7 +537,13 @@ export default function HostNetworkingStep() {
                                                       const deviceMatch = ethernetIface.deviceName.toLowerCase().includes(searchTerm);
                                                       const macMatch = ethernetIface.macAddress.toLowerCase().includes(searchTerm);
                                                       const notAlreadySelected = !(iface.bondPorts || []).includes(ethernetIface.deviceName);
-                                                      return (deviceMatch || macMatch) && notAlreadySelected;
+
+                                                      // Exclude if used in other Bond interfaces
+                                                      const usedInOtherBond = node.interfaces?.some(
+                                                        otherIface => otherIface.id !== iface.id && otherIface.type === "Bond" && otherIface.bondPorts?.includes(ethernetIface.deviceName)
+                                                      );
+
+                                                      return (deviceMatch || macMatch) && notAlreadySelected && !usedInOtherBond;
                                                     }).length === 0 && (
                                                     <div className="px-4 py-2 text-sm text-gray-500">
                                                       No matching interfaces found
@@ -729,41 +810,6 @@ export default function HostNetworkingStep() {
                             </div>
                           );
                         })}
-
-                    <div className="mb-4 relative">
-                      <button
-                        type="button"
-                        onClick={() => setShowAddInterfaceMenu({ ...showAddInterfaceMenu, [node.id]: !showAddInterfaceMenu[node.id] })}
-                        className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
-                      >
-                        Add Interface ▼
-                      </button>
-                      {showAddInterfaceMenu[node.id] && (
-                        <div className="absolute left-0 mt-1 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-10">
-                          <button
-                            type="button"
-                            onClick={() => addInterface(node.id, "Bond")}
-                            className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                          >
-                            Bond
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => addInterface(node.id, "VLAN")}
-                            className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                          >
-                            VLAN
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => addInterface(node.id, "Bridge")}
-                            className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                          >
-                            Bridge
-                          </button>
-                        </div>
-                      )}
-                    </div>
                       </div>
                     )}
                   </div>

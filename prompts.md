@@ -208,3 +208,15 @@ When copying an interface from one host to another, exclude any hosts that alrea
 ```
 In HostNetworkingStep.tsx when copying a VLAN interface to an eligible host, make sure that the copied interface's Base Interface is set to the matching named Base Interface on the target host.
 ```
+
+```
+In HostNetworkingStep.tsx, when copying a Bridge or Bond interface to an eligible host, make sure that the copied interface's Ports are set to the matching named interfaces
+```
+
+```
+In the HostNetworkingStep.tsx file, move the per-host Add Interface button and dropdown into the node card header, replicate the styling of the Copy and Delete interface buttons but with a green +
+```
+
+```
+In the HostNetworkingStep.tsx file, when setting the Ports for a Bond, don't list any Ports that have been defined for other Bond interfaces on that host.
+```
