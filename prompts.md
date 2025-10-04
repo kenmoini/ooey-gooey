@@ -196,3 +196,7 @@ Change the remove confirmation logic in HostConfigurationStep.tsx to match the a
 ```
 In HostNetworkingStep.tsx add user confirmation when deleting an interface, copy the modal pattern from HostConfigurationStep.tsx
 ```
+
+```
+In HostNetworkingStep.tsx add logic to copy defined interfaces from one node to another.  Only Bonds, Bridges, and VLANs should have a Copy button next to the Delete button.  The Copy button presents a dropdown list of the other defined Hosts.  If a VLAN interface is being copied, only list hosts in the dropdown that have a named interface that matches that VLAN interface's Base Interface.  If a Bridge or Bond interface is being copied, only list hosts in the dropdown that have named interfaces that match the interfaces defined for their Ports.
+```

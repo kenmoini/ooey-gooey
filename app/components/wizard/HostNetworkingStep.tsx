@@ -14,6 +14,7 @@ export default function HostNetworkingStep() {
   const [bridgePortInput, setBridgePortInput] = useState<{ [interfaceId: string]: string }>({});
   const [showBridgePortSuggestions, setShowBridgePortSuggestions] = useState<{ [interfaceId: string]: boolean }>({});
   const [interfaceToRemove, setInterfaceToRemove] = useState<{ nodeId: string; interfaceId: string; interfaceName: string } | null>(null);
+  const [showCopyDropdown, setShowCopyDropdown] = useState<{ [interfaceId: string]: boolean }>({});
 
   const toggleNode = (nodeId: string) => {
     const newExpanded = new Set(expandedNodes);
@@ -127,6 +128,63 @@ export default function HostNetworkingStep() {
     setInterfaceToRemove(null);
   };
 
+  const getEligibleNodesForCopy = (sourceNodeId: string, iface: any) => {
+    return formData.nodes.filter((node) => {
+      // Don't include the source node
+      if (node.id === sourceNodeId) return false;
+
+      // For VLAN interfaces, check if target node has matching base interface
+      if (iface.type === "VLAN") {
+        if (!iface.vlanBaseInterface) return false;
+        return node.interfaces?.some(i => i.deviceName === iface.vlanBaseInterface);
+      }
+
+      // For Bond interfaces, check if target node has all required ports
+      if (iface.type === "Bond") {
+        if (!iface.bondPorts || iface.bondPorts.length === 0) return false;
+        return iface.bondPorts.every((portName: string) =>
+          node.interfaces?.some(i => i.deviceName === portName)
+        );
+      }
+
+      // For Bridge interfaces, check if target node has all required ports
+      if (iface.type === "Bridge") {
+        if (!iface.bridgePorts || iface.bridgePorts.length === 0) return false;
+        return iface.bridgePorts.every((portName: string) =>
+          node.interfaces?.some(i => i.deviceName === portName)
+        );
+      }
+
+      return false;
+    });
+  };
+
+  const copyInterfaceToNode = (sourceNodeId: string, interfaceId: string, targetNodeId: string) => {
+    const sourceNode = formData.nodes.find(n => n.id === sourceNodeId);
+    const sourceInterface = sourceNode?.interfaces?.find(i => i.id === interfaceId);
+
+    if (!sourceInterface) return;
+
+    // Create a copy of the interface with a new ID
+    const newInterface = {
+      ...sourceInterface,
+      id: Date.now().toString(),
+    };
+
+    const updatedNodes = formData.nodes.map((node) => {
+      if (node.id === targetNodeId) {
+        return {
+          ...node,
+          interfaces: [...(node.interfaces || []), newInterface],
+        };
+      }
+      return node;
+    });
+
+    updateFormData({ nodes: updatedNodes });
+    setShowCopyDropdown({ ...showCopyDropdown, [interfaceId]: false });
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Host Networking</h2>
@@ -211,21 +269,68 @@ export default function HostNetworkingStep() {
                                   </svg>
                                 </button>
                                 {(!iface.type || iface.type !== "Ethernet") && (
-                                  <button
-                                    type="button"
-                                    onClick={() => setInterfaceToRemove({ nodeId: node.id, interfaceId: iface.id, interfaceName: iface.deviceName })}
-                                    className="px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700"
-                                    title="Remove interface"
-                                  >
-                                    <svg
-                                      className="w-5 h-5"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      viewBox="0 0 24 24"
+                                  <div className="flex items-center">
+                                    <div className="relative">
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setShowCopyDropdown({ ...showCopyDropdown, [iface.id]: !showCopyDropdown[iface.id] });
+                                        }}
+                                        className="px-4 py-3 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                                        title="Copy interface to another host"
+                                      >
+                                        <svg
+                                          className="w-5 h-5"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                        </svg>
+                                      </button>
+                                      {showCopyDropdown[iface.id] && (
+                                        <div className="absolute right-0 mt-1 w-64 bg-white border border-gray-300 rounded-md shadow-lg z-20">
+                                          <div className="px-3 py-2 text-xs font-semibold text-gray-500 border-b">
+                                            Copy to host:
+                                          </div>
+                                          {getEligibleNodesForCopy(node.id, iface).length === 0 ? (
+                                            <div className="px-4 py-3 text-sm text-gray-500">
+                                              No eligible hosts found
+                                            </div>
+                                          ) : (
+                                            getEligibleNodesForCopy(node.id, iface).map((targetNode) => (
+                                              <button
+                                                key={targetNode.id}
+                                                type="button"
+                                                onClick={() => copyInterfaceToNode(node.id, iface.id, targetNode.id)}
+                                                className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                                              >
+                                                <div className="font-medium text-sm">{targetNode.name}</div>
+                                                {targetNode.role && (
+                                                  <div className="text-xs text-gray-500">{targetNode.role}</div>
+                                                )}
+                                              </button>
+                                            ))
+                                          )}
+                                        </div>
+                                      )}
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => setInterfaceToRemove({ nodeId: node.id, interfaceId: iface.id, interfaceName: iface.deviceName })}
+                                      className="px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                      title="Remove interface"
                                     >
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                  </button>
+                                      <svg
+                                        className="w-5 h-5"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                      </svg>
+                                    </button>
+                                  </div>
                                 )}
                               </div>
 
