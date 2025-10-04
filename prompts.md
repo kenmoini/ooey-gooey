@@ -104,3 +104,15 @@ On the Host Networking page, on each defined Interface add an input field for "M
 ```
 On the Host Networking page, when Enable IPv4 is checked, display another checkbox titled "Enable IPv4 DHCP" that is checked by default.  If unchecked, display an input for "IP Address" for the interface.
 ```
+
+```
+On the Host Networking page, add a dropdown button to add another Interface with options for "Bond", "VLAN", and "Bridge".
+```
+
+```
+On the Host Networking page, hide the "Type" dropdown in the interface definition but keep the value present in the form state and display it in the interface section header.  If the interface was defined in the "Host Configuration" page the type should be "Ethernet".  The types of other added Interfaces should be what type is selected from the Add Interface dropdown.
+```
+
+```
+On the Host Networking page, if the interface type is "Bond" then display a Ports multiselect input field.  When focusing on the field it should display the list of Ethernet type Interfaces defined on that host.
+```

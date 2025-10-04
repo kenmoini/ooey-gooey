@@ -8,6 +8,7 @@ export default function HostNetworkingStep() {
   const { formData, updateFormData } = useFormContext();
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
   const [expandedInterfaces, setExpandedInterfaces] = useState<Set<string>>(new Set());
+  const [showAddInterfaceMenu, setShowAddInterfaceMenu] = useState<{ [nodeId: string]: boolean }>({});
 
   const toggleNode = (nodeId: string) => {
     const newExpanded = new Set(expandedNodes);
@@ -51,6 +52,36 @@ export default function HostNetworkingStep() {
     });
 
     updateFormData({ nodes: updatedNodes });
+  };
+
+  const addInterface = (nodeId: string, type: InterfaceType) => {
+    const typePrefix = type.toLowerCase();
+    const existingCount = formData.nodes
+      .find((n) => n.id === nodeId)
+      ?.interfaces?.filter((i) => i.deviceName.startsWith(typePrefix))
+      .length || 0;
+
+    const newInterface = {
+      id: Date.now().toString(),
+      deviceName: `${typePrefix}${existingCount}`,
+      macAddress: "",
+      type,
+      state: "Up" as InterfaceState,
+      mtu: 1500,
+    };
+
+    const updatedNodes = formData.nodes.map((node) => {
+      if (node.id === nodeId) {
+        return {
+          ...node,
+          interfaces: [...(node.interfaces || []), newInterface],
+        };
+      }
+      return node;
+    });
+
+    updateFormData({ nodes: updatedNodes });
+    setShowAddInterfaceMenu({ ...showAddInterfaceMenu, [nodeId]: false });
   };
 
   return (
@@ -97,6 +128,41 @@ export default function HostNetworkingStep() {
 
                 {isNodeExpanded && (
                   <div className="px-6 pb-6 pt-2 border-t border-gray-300 bg-gray-50">
+                    <div className="mb-4 relative">
+                      <button
+                        type="button"
+                        onClick={() => setShowAddInterfaceMenu({ ...showAddInterfaceMenu, [node.id]: !showAddInterfaceMenu[node.id] })}
+                        className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+                      >
+                        Add Interface ▼
+                      </button>
+                      {showAddInterfaceMenu[node.id] && (
+                        <div className="absolute left-0 mt-1 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-10">
+                          <button
+                            type="button"
+                            onClick={() => addInterface(node.id, "Bond")}
+                            className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                          >
+                            Bond
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => addInterface(node.id, "VLAN")}
+                            className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                          >
+                            VLAN
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => addInterface(node.id, "Bridge")}
+                            className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                          >
+                            Bridge
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
                     {!node.interfaces || node.interfaces.length === 0 ? (
                       <div className="text-center py-4 text-gray-500">
                         No interfaces configured for this node. Please add interfaces in the Host Configuration page.
@@ -118,6 +184,11 @@ export default function HostNetworkingStep() {
                                   </div>
                                   <div className="text-sm text-gray-500">
                                     {iface.macAddress}
+                                  </div>
+                                  <div>
+                                    <span className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded">
+                                      {iface.type || "Ethernet"}
+                                    </span>
                                   </div>
                                 </div>
                                 <svg
@@ -146,24 +217,6 @@ export default function HostNetworkingStep() {
                                       >
                                         <option value="Up">Up</option>
                                         <option value="Down">Down</option>
-                                      </select>
-                                    </div>
-
-                                    <div>
-                                      <label className="block text-sm font-medium mb-1">
-                                        Type
-                                      </label>
-                                      <select
-                                        value={iface.type || "Ethernet"}
-                                        onChange={(e) =>
-                                          updateInterface(node.id, iface.id, "type", e.target.value as InterfaceType)
-                                        }
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                      >
-                                        <option value="Ethernet">Ethernet</option>
-                                        <option value="Bond">Bond</option>
-                                        <option value="Bridge">Bridge</option>
-                                        <option value="VLAN">VLAN</option>
                                       </select>
                                     </div>
 
