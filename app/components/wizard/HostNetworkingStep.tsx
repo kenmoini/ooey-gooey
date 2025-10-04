@@ -261,6 +261,7 @@ export default function HostNetworkingStep() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
+                  {node.interfaces && (
                   <div className="relative">
                     <button
                       type="button"
@@ -308,6 +309,7 @@ export default function HostNetworkingStep() {
                       </div>
                     )}
                   </div>
+                  )}
                 </div>
 
                 {isNodeExpanded && (
