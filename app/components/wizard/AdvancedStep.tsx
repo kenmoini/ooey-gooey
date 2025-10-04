@@ -300,6 +300,9 @@ export default function AdvancedStep() {
                   placeholder="localhost,127.0.0.1,.example.com"
                 />
               </div>
+              <div>
+                <span className="text-xs text-gray-500">If your outbound proxy is doing SSL-reencryption then ensure the Root CA is present in the Additional Trusted Root CAs field above.</span>
+              </div>
             </div>
           )}
         </div>

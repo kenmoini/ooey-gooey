@@ -7,8 +7,9 @@ export default function Home() {
       <main className="min-h-screen bg-gray-100 py-12">
         <div className="container mx-auto">
           <h1 className="text-4xl font-bold text-center mb-8">
-            Cluster Configuration Wizard
+            OpenShift Configuration Wizard
           </h1>
+          <h3>Agent Based Install</h3>
           <Wizard />
         </div>
       </main>

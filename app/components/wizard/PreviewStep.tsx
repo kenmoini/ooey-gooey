@@ -109,6 +109,18 @@ export default function PreviewStep() {
                   <div className="text-sm">
                     <span className="font-medium">Platform Images Registry:</span> {formData.platformImagesRegistry}
                   </div>
+                  {formData.registryMappings.length > 0 && (
+                    <div className="mt-2">
+                      <span className="font-medium">Registry Mappings:</span>
+                      <ul className="ml-6 mt-1">
+                        {formData.registryMappings.map((mapping) => (
+                          <li key={mapping.id} className="list-disc text-sm">
+                            {mapping.sourceRegistry} → {mapping.mirrorRegistry}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Cluster Configuration Wizard",
-  description: "Configure your cluster deployment",
+  title: "OpenShift Agent Based Install Configuration Wizard",
+  description: "Configure your OpenShift cluster deployment and generate the YAML and steps needed to deploy it.",
 };
 
 export default function RootLayout({

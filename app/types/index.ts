@@ -9,6 +9,12 @@ export interface Node {
   role?: NodeRole;
 }
 
+export interface RegistryMapping {
+  id: string;
+  sourceRegistry: string;
+  mirrorRegistry: string;
+}
+
 export interface FormData {
   clusterName: string;
   clusterDomain: string;
@@ -23,6 +29,7 @@ export interface FormData {
   configureDisconnectedRegistries: boolean;
   releaseImageRegistry: string;
   platformImagesRegistry: string;
+  registryMappings: RegistryMapping[];
   ntpServers: string[];
   totalClusterNetworkCIDR: string;
   clusterNetworkHostPrefix: number;
@@ -48,6 +55,7 @@ export const initialFormData: FormData = {
   configureDisconnectedRegistries: false,
   releaseImageRegistry: "quay.io/openshift-release-dev/ocp-release",
   platformImagesRegistry: "quay.io/openshift-release-dev/ocp-v4.0-art-dev",
+  registryMappings: [],
   ntpServers: [],
   totalClusterNetworkCIDR: "10.128.0.0/14",
   clusterNetworkHostPrefix: 23,

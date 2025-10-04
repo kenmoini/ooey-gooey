@@ -46,6 +46,13 @@ export function generateYaml(formData: FormData): string {
       releaseImageRegistry: formData.releaseImageRegistry,
       platformImagesRegistry: formData.platformImagesRegistry,
     };
+
+    if (formData.registryMappings.length > 0) {
+      yamlData.disconnected.registryMappings = formData.registryMappings.map((mapping) => ({
+        source: mapping.sourceRegistry,
+        mirror: mapping.mirrorRegistry,
+      }));
+    }
   }
 
   yamlData.advanced = {};

@@ -80,3 +80,11 @@ Add a page to the Wizard called "Disconnected" before the "Advanced" page.  On t
 ```
 On the Advanced page, add a button to the SSH Public Keys input for a user to upload a public key file.
 ```
+
+```
+On the Disconnected page, add an object list input field for "Additional Registry Mappings" with object fields for "Source Registry" and "Mirror Registry"
+```
+
+```
+On the Host Configuration page create a wide collaped card for all the Nodes added in the Nodes page.  When the card is expanded, it should have input fields for an object list of "Interfaces" with inputs/keys for "Device Name" and "MAC Address".
+```

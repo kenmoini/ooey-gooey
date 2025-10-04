@@ -2,7 +2,7 @@
 
 import { useFormContext } from "@/app/context/FormContext";
 import GeneralStep from "./wizard/GeneralStep";
-import ArchitectureStep from "./wizard/ArchitectureStep";
+import HostConfigurationStep from "./wizard/HostConfigurationStep";
 import NodesStep from "./wizard/NodesStep";
 import NetworkingStep from "./wizard/NetworkingStep";
 import DisconnectedStep from "./wizard/DisconnectedStep";
@@ -11,9 +11,9 @@ import PreviewStep from "./wizard/PreviewStep";
 
 const steps = [
   { title: "General", component: GeneralStep },
-  { title: "Architecture", component: ArchitectureStep },
-  { title: "Nodes", component: NodesStep },
   { title: "Networking", component: NetworkingStep },
+  { title: "Nodes", component: NodesStep },
+  { title: "Host Configuration", component: HostConfigurationStep },
   { title: "Disconnected", component: DisconnectedStep },
   { title: "Advanced", component: AdvancedStep },
   { title: "Preview", component: PreviewStep },
