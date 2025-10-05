@@ -62,14 +62,14 @@ export default function PreviewStep() {
             <div className="p-4 border-t border-gray-200">
               <ol className="list-decimal list-inside space-y-2">
                 <li>Review the generated YAML files for accuracy.</li>
-                <li>Copy/Download the following two generated YAML files below.Take note of the filenames and replace the PULL_SECRET_CHANGE_ME placeholder with your actual pull secret.</li>
-                <li>Download the OpenShift binaries.<br />
+                <li>Copy/Download the following two generated YAML files below. Take note of the filenames and replace <span className="text-gray-500 font-mono text-sm">PULL_SECRET_CHANGE_ME</span> and other placeholders with your actual pull secret.</li>
+                <li>Download the OpenShift binaries, ensure NMState is installed.<br />
                   <span className="text-gray-500 font-mono text-sm ml-5">curl -s https://raw.githubusercontent.com/kenmoini/disconnected-openshift/refs/heads/main/binaries/download-ocp-binaries.sh | bash</span>
                 </li>
-                <li>Create the Agent Based Installer ISO<br />
+                <li>Create the Agent Based Installer ISO:<br />
                   <span className="text-gray-500 font-mono text-sm ml-5">./bin/openshift-install agent create iso --dir path/with/yaml/files</span>
                 </li>
-                <li>Use the generated ISO to boot each host you plan to use in the cluster.</li>
+                <li>Use the generated <span className="text-gray-500 font-mono text-sm">agent.ARCH.iso</span> ISO to boot each host you plan to use in the cluster.</li>
                 <li>Once all hosts are booted, the installation should automatically begin.</li>
                 <li>Monitor the installation progress:<br />
                   <span className="text-gray-500 font-mono text-sm ml-5">./bin/openshift-install agent wait-for install-complete --dir path/with/yaml/files [--log-level=debug]</span>
