@@ -73,26 +73,6 @@ export default function NetworkingStep() {
           </div>
         ) : (
           <>
-        <div className="pb-4">
-          <label htmlFor="loadBalancerType" className="block text-sm font-medium mb-2">
-            Load Balancer Type
-          </label>
-          <select
-            id="loadBalancerType"
-            value={formData.loadBalancerType}
-            onChange={(e) =>
-              updateFormData({ loadBalancerType: e.target.value as LoadBalancerType })
-            }
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {loadBalancerTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </div>
-        <hr className="pt-4" />
             <div>
               <label htmlFor="apiVIP" className="block text-sm font-medium mb-2">
                 API VIP
