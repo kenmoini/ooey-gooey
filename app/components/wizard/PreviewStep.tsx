@@ -69,7 +69,7 @@ export default function PreviewStep() {
                 <li>Create the Agent Based Installer ISO:<br />
                   <span className="text-gray-500 font-mono text-sm ml-5">./bin/openshift-install agent create iso --dir path/with/yaml/files</span>
                 </li>
-                <li>Use the generated <span className="text-gray-500 font-mono text-sm">agent.ARCH.iso</span> ISO to boot each host you plan to use in the cluster.</li>
+                <li>Use the generated <span className="text-gray-500 font-mono text-sm">agent.ARCH.iso</span> ISO to boot each host you plan to use in the cluster.  This <a href="https://github.com/kenmoini/ansible-redfish">Redfish automation</a> may be helpful.</li>
                 <li>Once all hosts are booted, the installation should automatically begin.</li>
                 <li>Monitor the installation progress:<br />
                   <span className="text-gray-500 font-mono text-sm ml-5">./bin/openshift-install agent wait-for install-complete --dir path/with/yaml/files [--log-level=debug]</span>
