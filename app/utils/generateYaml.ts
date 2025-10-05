@@ -91,7 +91,7 @@ export function generateInstallConfigYAML(formData: FormData): string {
   installConfig.additionalTrustBundlePolicy = formData.additionalTrustedRootCAs ? "Always" : undefined;
   installConfig.additionalTrustBundle = formData.additionalTrustedRootCAs || undefined;
 
-  const outputY = yaml.dump(installConfig).replace(/\|-/g, '|');
+  const outputY = yaml.dump(installConfig).replace(/: \|-/g, ': |');
   // Replace any '|-' with '|'
   return outputY;
 }
