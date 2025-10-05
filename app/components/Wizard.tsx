@@ -204,6 +204,29 @@ export default function Wizard() {
       dnsServers: ["8.8.8.8", "8.8.4.4"],
       dnsSearchDomains: ["acme.org"],
       ntpServers: ["time.google.com"],
+      configureDisconnectedRegistries: true,
+      releaseImageRegistry: "registry.example.io/openshift-release-dev/ocp-release",
+      platformImagesRegistry: "registry.example.io/openshift-release-dev/ocp-v4.0-art-dev",
+      registryMappings: [
+        {
+          id: "mapping-1",
+          sourceRegistry: "quay.io",
+          mirrorRegistry: "registry.example.io/quay-mirror",
+        },
+        {
+          id: "mapping-2",
+          sourceRegistry: "docker.io",
+          mirrorRegistry: "registry.example.io/docker-mirror",
+        },
+        {
+          id: "mapping-3",
+          sourceRegistry: "registry.redhat.io",
+          mirrorRegistry: "registry.example.io/registry-redhat-mirror",
+        },
+      ],
+      httpProxy: "http://proxy.acme.org:8080",
+      httpsProxy: "http://proxy.acme.org:8080",
+      noProxy: "acme.org",
       sshPublicKeys: ["ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC... demo@acme.org"],
     });
   };

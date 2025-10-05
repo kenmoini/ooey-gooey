@@ -1,11 +1,10 @@
 "use client";
 
 import { useFormContext } from "@/app/context/FormContext";
-import { generateYaml, generateInstallConfigYAML, generateAgentConfigYAML } from "@/app/utils/generateYaml";
+import { generateInstallConfigYAML, generateAgentConfigYAML } from "@/app/utils/generateYaml";
 
 export default function PreviewStep() {
   const { formData } = useFormContext();
-  const yamlOutput = generateYaml(formData);
   const installConfigYAMLOutput = generateInstallConfigYAML(formData);
   const agentConfigYAMLOutput = generateAgentConfigYAML(formData);
 
@@ -16,13 +15,13 @@ export default function PreviewStep() {
       <div className="space-y-6">
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Generated install-config.yaml </h3>
-          <pre className="bg-gray-900 text-green-400 p-4 rounded-md overflow-auto font-mono text-sm">
+          <pre className="bg-gray-100 p-4 rounded-md overflow-auto font-mono text-sm">
             {installConfigYAMLOutput}
           </pre>
         </div>
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Generated agent-config.yaml </h3>
-          <pre className="bg-gray-900 text-green-400 p-4 rounded-md overflow-auto font-mono text-sm">
+          <pre className="bg-gray-100 p-4 rounded-md overflow-auto font-mono text-sm">
             {agentConfigYAMLOutput}
           </pre>
         </div>
