@@ -140,7 +140,7 @@ export interface AgentConfig {
           dhcp: boolean;
           address?: Array<{
             address: string;
-            prefixLength: number;
+            "prefix-length": number;
           }>;
         };
         ipv6?: {
@@ -152,11 +152,20 @@ export interface AgentConfig {
           port: string[];
         };
         vlan: {
-          baseInterface: string;
+          "base-iface": string;
           id: number;
         };
         bridge?: {
-          ports: string[];
+          port: string[];
+          options?: {
+            stp?: {
+              enabled?: boolean;
+              priority?: number;
+              "max-age"?: number;
+              "hello-time"?: number;
+              "forward-delay"?: number;
+            };
+          };
         };
       }>;
     };

@@ -656,7 +656,6 @@ export default function HostNetworkingStep() {
                                                     .filter(candidateIface => {
                                                       const searchTerm = (bridgePortInput[iface.id] || "").toLowerCase();
                                                       const deviceMatch = candidateIface.deviceName.toLowerCase().includes(searchTerm);
-                                                      const macMatch = candidateIface.macAddress.toLowerCase().includes(searchTerm);
                                                       const notAlreadySelected = !(iface.bridgePorts || []).includes(candidateIface.deviceName);
 
                                                       // For Ethernet: exclude if used in other Bonds or Bridges
@@ -667,7 +666,11 @@ export default function HostNetworkingStep() {
                                                           otherIface.bridgePorts?.includes(candidateIface.deviceName)
                                                         )
                                                       );
-                                                      return (deviceMatch || macMatch) && notAlreadySelected && !usedInOtherInterface;
+                                                      if (candidateIface.macAddress) {
+                                                        const macMatch = candidateIface.macAddress.toLowerCase().includes(searchTerm);
+                                                        return (deviceMatch || macMatch) && notAlreadySelected && !usedInOtherInterface;
+                                                      }
+                                                      return (deviceMatch) && notAlreadySelected && !usedInOtherInterface;
                                                     })
                                                     .map(candidateIface => (
                                                       <button
@@ -697,7 +700,6 @@ export default function HostNetworkingStep() {
                                                     .filter(candidateIface => {
                                                       const searchTerm = (bridgePortInput[iface.id] || "").toLowerCase();
                                                       const deviceMatch = candidateIface.deviceName.toLowerCase().includes(searchTerm);
-                                                      const macMatch = candidateIface.macAddress.toLowerCase().includes(searchTerm);
                                                       const notAlreadySelected = !(iface.bridgePorts || []).includes(candidateIface.deviceName);
 
                                                       // For Ethernet: exclude if used in other Bonds or Bridges
@@ -708,7 +710,11 @@ export default function HostNetworkingStep() {
                                                           otherIface.bridgePorts?.includes(candidateIface.deviceName)
                                                         )
                                                       );
-                                                      return (deviceMatch || macMatch) && notAlreadySelected && !usedInOtherInterface;
+                                                      if (candidateIface.macAddress) {
+                                                        const macMatch = candidateIface.macAddress.toLowerCase().includes(searchTerm);
+                                                        return (deviceMatch || macMatch) && notAlreadySelected && !usedInOtherInterface;
+                                                      }
+                                                      return (deviceMatch) && notAlreadySelected && !usedInOtherInterface;
                                                     }).length === 0 && (
                                                     <div className="px-4 py-2 text-sm text-gray-500">
                                                       No matching interfaces found

@@ -131,11 +131,10 @@ export function generateAgentConfigYAML(formData: FormData): string {
     if (!node.installationDeviceAuto) {
       host.rootDeviceHints = { deviceName: node.installationDevicePath };
     }
-    // loop through the interfaces and get the default route interface name
     
     if (node.interfaces && node.interfaces.length > 0) {
       const defaultRouteInterface = node.interfaces.find((iface) => iface.defaultRoute);
-      if (defaultRouteInterface && defaultRouteInterface.ipv4Address) {
+      if (defaultRouteInterface && defaultRouteInterface.gatewayIPv4) {
         defaultRouteInterfaceIPv4 = defaultRouteInterface.gatewayIPv4;
         defaultRouteInterfaceName = defaultRouteInterface.deviceName;
       }
@@ -148,29 +147,13 @@ export function generateAgentConfigYAML(formData: FormData): string {
           };
           return interfaceData;
         }
-
       });
       // Remove any undefined entries (non-Ethernet interfaces)
       host.interfaces = host.interfaces.filter((iface: any) => iface !== undefined);
-    }
-    if (node.interfaces && node.interfaces.length > 0) {
-      host.networkConfig = { interfaces: [] };
-      host.networkConfig.interfaces = node.interfaces.map((iface) => {
-        const interfaceData: any = {
-          name: iface.deviceName,
-          type: iface.type,
-          state: iface.state,
-        };
-        if (iface.mtu) {
-          interfaceData.mtu = iface.mtu;
-        }
-        return interfaceData;
-      });
+
     }
 
     // Network configuration
-    // Determine the default route interface
-    
     if (node.interfaces && node.interfaces.length > 0) {
     host.networkConfig = {
       routes: {
@@ -186,6 +169,87 @@ export function generateAgentConfigYAML(formData: FormData): string {
       "dns-resolver": { config: { server: [...formData.dnsServers], search: [...formData.dnsSearchDomains] } },
       
     };
+    if (node.interfaces && node.interfaces.length > 0) {
+      host.networkConfig.interfaces = node.interfaces.map((iface) => {
+        const interfaceData: any = {
+          name: iface.deviceName,
+        };
+        if (iface.state) {
+          interfaceData.state = iface.state.toLowerCase();
+        }
+        if (iface.macAddress) {
+          interfaceData["mac-address"] = iface.macAddress.toLowerCase();
+        }
+        if (iface.mtu) {
+          interfaceData.mtu = iface.mtu;
+        }
+        if (iface.type) {
+          if (iface.type === "Bridge") {
+            interfaceData.type = "linux-bridge";
+          } else {
+            interfaceData.type = iface.type.toLowerCase();
+          }
+        }
+
+        if (iface.type === "Bond") {
+          interfaceData["link-aggregation"] = {
+            mode: iface.bondingMode || "active-backup",
+            port: iface.bondPorts ? iface.bondPorts.map((port) => port) : [],
+          };
+          if (iface.bondingMode) {
+            if (iface.bondingMode === "LACP") {
+              interfaceData["link-aggregation"].mode = "802.3ad";
+            } else if (iface.bondingMode === "Active/Backup") {
+              interfaceData["link-aggregation"].mode = "active-backup";
+            } else {
+              interfaceData["link-aggregation"].mode = iface.bondingMode;
+            }
+          }
+        }
+
+        if (iface.type === "VLAN" && iface.vlanId && iface.vlanBaseInterface) {
+          interfaceData.vlan = {
+            id: iface.vlanId,
+            "base-iface": iface.vlanBaseInterface,
+          };
+        }
+
+        if (iface.type === "Bridge" && iface.bridgePorts && iface.bridgePorts.length > 0) {
+          interfaceData.bridge = {
+            port: iface.bridgePorts.map((port) => port),
+          };
+          
+          interfaceData.bridge.options = {
+            //stp: {enabled: false, priority: 32768, "max-age": 20, "hello-time": 2, "forward-delay": 15 },
+            stp: {enabled: false },
+          };
+        }
+
+        if (iface.enableIPv4) {
+          interfaceData.ipv4 = {
+            enabled: true,
+            dhcp: iface.enableIPv4DHCP,
+          };
+          if (!iface.enableIPv4DHCP && iface.ipv4Address) {
+            interfaceData.ipv4.address = [
+              {
+                address: iface.ipv4Address,
+                "prefix-length": parseInt(iface.ipv4Address.split('/')[1], 10),
+              },
+            ];
+          }
+        } else {
+          interfaceData.ipv4 = { enabled: false, dhcp: false };
+        }
+        // IPv6 Stub
+        if (iface.enableIPv6) {
+          interfaceData.ipv6 = { enabled: iface.enableIPv6 };
+        } else {
+          interfaceData.ipv6 = { enabled: false };
+        }
+        return interfaceData;
+      });
+    }
   }
 
     // 

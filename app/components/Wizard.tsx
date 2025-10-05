@@ -5,7 +5,6 @@ import { useState, useEffect, useRef } from "react";
 import GeneralStep from "./wizard/GeneralStep";
 import HostConfigurationStep from "./wizard/HostConfigurationStep";
 import HostNetworkingStep from "./wizard/HostNetworkingStep";
-//import NodesStep from "./wizard/NodesStep";
 import NetworkingStep from "./wizard/NetworkingStep";
 import DisconnectedStep from "./wizard/DisconnectedStep";
 import AdvancedStep from "./wizard/AdvancedStep";
@@ -50,7 +49,6 @@ export default function Wizard() {
             enableIPv4DHCP: false,
             ipv4Address: "192.168.1.101/24",
             gatewayIPv4: "192.168.1.1",
-            mtu: 1500,
             defaultRoute: true,
           } as NetworkInterface,
         ],
@@ -71,7 +69,6 @@ export default function Wizard() {
             enableIPv4DHCP: false,
             ipv4Address: "192.168.1.102/24",
             gatewayIPv4: "192.168.1.1",
-            mtu: 1500,
             defaultRoute: true,
           } as NetworkInterface,
         ],
@@ -92,7 +89,6 @@ export default function Wizard() {
             enableIPv4DHCP: false,
             ipv4Address: "192.168.1.103/24",
             gatewayIPv4: "192.168.1.1",
-            mtu: 1500,
             defaultRoute: true,
           } as NetworkInterface,
         ],
