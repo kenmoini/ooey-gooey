@@ -54,6 +54,7 @@ export interface FormData {
   ingressVIP: string;
   dnsServers: string[];
   dnsSearchDomains: string[];
+  machineNetworkCIDRs: string[];
   configureDisconnectedRegistries: boolean;
   releaseImageRegistry: string;
   platformImagesRegistry: string;
@@ -81,6 +82,7 @@ export const initialFormData: FormData = {
   ingressVIP: "",
   dnsServers: [],
   dnsSearchDomains: [],
+  machineNetworkCIDRs: [],
   configureDisconnectedRegistries: false,
   releaseImageRegistry: "quay.io/openshift-release-dev/ocp-release",
   platformImagesRegistry: "quay.io/openshift-release-dev/ocp-v4.0-art-dev",

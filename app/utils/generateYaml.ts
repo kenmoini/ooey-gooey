@@ -20,7 +20,7 @@ export function generateInstallConfigYAML(formData: FormData): string {
       replicas: formData.nodes.filter((node) => node.role === "Control Plane").length,
     },
     networking: {
-      networkType: "OVN-Kubernetes",
+      networkType: "OVNKubernetes",
       clusterNetwork: [
         {
           cidr: formData.totalClusterNetworkCIDR,
@@ -28,16 +28,11 @@ export function generateInstallConfigYAML(formData: FormData): string {
         },
       ],
       serviceNetwork: [formData.serviceNetworkCIDR],
+      machineNetwork: formData.machineNetworkCIDRs.length > 0
+        ? formData.machineNetworkCIDRs.map(cidr => ({ cidr }))
+        : undefined,
     },
-    fips: formData.fipsMode || false,
     sshKey: formData.sshPublicKeys ? formData.sshPublicKeys.join("\n") : undefined,
-    proxy: formData.httpProxy || formData.httpsProxy || formData.noProxy ? {
-      httpProxy: formData.httpProxy || undefined,
-      httpsProxy: formData.httpsProxy || undefined,
-      noProxy: formData.noProxy || undefined,
-    } : undefined,
-    additionalTrustBundle: formData.additionalTrustedRootCAs || undefined,
-    additionalTrustBundlePolicy: formData.additionalTrustedRootCAs ? "Always" : undefined,
   };
 
   if (formData.platformType === "Bare Metal") {
@@ -86,7 +81,19 @@ export function generateInstallConfigYAML(formData: FormData): string {
     });
   }
 
-  return yaml.dump(installConfig);
+
+  installConfig.fips = formData.fipsMode || false,
+  installConfig.proxy = formData.httpProxy || formData.httpsProxy || formData.noProxy ? {
+    httpProxy: formData.httpProxy || undefined,
+    httpsProxy: formData.httpsProxy || undefined,
+    noProxy: formData.noProxy || undefined,
+  } : undefined,
+  installConfig.additionalTrustBundlePolicy = formData.additionalTrustedRootCAs ? "Always" : undefined;
+  installConfig.additionalTrustBundle = formData.additionalTrustedRootCAs || undefined;
+
+  const outputY = yaml.dump(installConfig).replace(/\|-/g, '|');
+  // Replace any '|-' with '|'
+  return outputY;
 }
 
 export function generateAgentConfigYAML(formData: FormData): string {

@@ -203,6 +203,7 @@ export default function Wizard() {
       ingressVIP: "192.168.1.101",
       dnsServers: ["8.8.8.8", "8.8.4.4"],
       dnsSearchDomains: ["acme.org"],
+      machineNetworkCIDRs: ["192.168.1.0/24"],
       ntpServers: ["time.google.com"],
       configureDisconnectedRegistries: true,
       releaseImageRegistry: "registry.example.io/openshift-release-dev/ocp-release",
@@ -335,6 +336,7 @@ export default function Wizard() {
         ingressVIP: "",
         dnsServers: [],
         dnsSearchDomains: [],
+        machineNetworkCIDRs: [],
         configureDisconnectedRegistries: false,
         releaseImageRegistry: "quay.io/openshift-release-dev/ocp-release",
         platformImagesRegistry: "quay.io/openshift-release-dev/ocp-v4.0-art-dev",
@@ -417,13 +419,17 @@ export default function Wizard() {
         >
           Previous
         </button>
-        <button
+        {currentStep !== steps.length - 1 && (
+
+          <button
           onClick={handleNext}
           disabled={currentStep === steps.length - 1}
           className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
+          >
           {currentStep === steps.length - 1 ? "Finish" : "Next"}
         </button>
+        )}
+
       </div>
 
       {/* Clear Wizard Link */}

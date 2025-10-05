@@ -259,3 +259,11 @@ Wrap the YAML output in the PreviewStep.tsx with some collapsed accordion sectio
 ```
 Add a Download button to the upper right hand corner of the YAML output blocks in the PreviewStep.tsx next to the Copy to Clipboard button.
 ```
+
+```
+Analyze this code base and update the README.md file accordingly
+```
+
+```
+In the NetworkingStep.tsx file, add a list input field for "Machine Network CIDRs" with helper text saying "Must include used subnets for node default route interfaces and VIPs"
+```

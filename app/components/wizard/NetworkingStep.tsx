@@ -10,6 +10,7 @@ export default function NetworkingStep() {
   const { formData, updateFormData } = useFormContext();
   const [dnsServer, setDnsServer] = useState("");
   const [dnsSearchDomain, setDnsSearchDomain] = useState("");
+  const [machineNetworkCIDR, setMachineNetworkCIDR] = useState("");
 
   const addDnsServer = () => {
     if (dnsServer.trim()) {
@@ -34,6 +35,19 @@ export default function NetworkingStep() {
   const removeDnsSearchDomain = (index: number) => {
     updateFormData({
       dnsSearchDomains: formData.dnsSearchDomains.filter((_, i) => i !== index),
+    });
+  };
+
+  const addMachineNetworkCIDR = () => {
+    if (machineNetworkCIDR.trim()) {
+      updateFormData({ machineNetworkCIDRs: [...formData.machineNetworkCIDRs, machineNetworkCIDR.trim()] });
+      setMachineNetworkCIDR("");
+    }
+  };
+
+  const removeMachineNetworkCIDR = (index: number) => {
+    updateFormData({
+      machineNetworkCIDRs: formData.machineNetworkCIDRs.filter((_, i) => i !== index),
     });
   };
 
@@ -155,7 +169,7 @@ export default function NetworkingStep() {
           )}
         </div>
 
-        <div>
+        <div className="pb-4">
           <label htmlFor="dnsSearchDomains" className="block text-sm font-medium mb-2">
             DNS Search Domains
           </label>
@@ -186,6 +200,50 @@ export default function NetworkingStep() {
                   <span>{domain}</span>
                   <button
                     onClick={() => removeDnsSearchDomain(index)}
+                    className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded"
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <hr className="pt-4" />
+
+        <div>
+          <label htmlFor="machineNetworkCIDRs" className="block text-sm font-medium mb-2">
+            Machine Network CIDRs
+            <br /><span className="text-gray-400 text-xs">Must include used subnets for node default route interfaces and VIPs</span>
+          </label>
+          <div className="flex gap-2">
+            <input
+              id="machineNetworkCIDRs"
+              type="text"
+              value={machineNetworkCIDR}
+              onChange={(e) => setMachineNetworkCIDR(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && addMachineNetworkCIDR()}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter machine network CIDR (e.g., 192.168.1.0/24)"
+            />
+            <button
+              onClick={addMachineNetworkCIDR}
+              className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Add
+            </button>
+          </div>
+          {formData.machineNetworkCIDRs.length > 0 && (
+            <ul className="mt-2 space-y-2">
+              {formData.machineNetworkCIDRs.map((cidr, index) => (
+                <li
+                  key={index}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-md"
+                >
+                  <span>{cidr}</span>
+                  <button
+                    onClick={() => removeMachineNetworkCIDR(index)}
                     className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded"
                   >
                     Remove

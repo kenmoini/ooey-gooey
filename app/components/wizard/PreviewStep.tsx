@@ -62,7 +62,7 @@ export default function PreviewStep() {
             <div className="p-4 border-t border-gray-200">
               <ol className="list-decimal list-inside space-y-2">
                 <li>Review the generated YAML files for accuracy.</li>
-                <li>Copy/Download the following two generated YAML files below.  Take note of the filenames.</li>
+                <li>Copy/Download the following two generated YAML files below.Take note of the filenames and replace the PULL_SECRET_CHANGE_ME placeholder with your actual pull secret.</li>
                 <li>Download the OpenShift binaries.<br />
                   <span className="text-gray-500 font-mono text-sm ml-5">curl -s https://raw.githubusercontent.com/kenmoini/disconnected-openshift/refs/heads/main/binaries/download-ocp-binaries.sh | bash</span>
                 </li>
