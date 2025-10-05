@@ -90,6 +90,9 @@ export default function HostConfigurationStep() {
     const newControlPlaneCount = nodeRole === "Control Plane" ? controlPlaneCount + 1 : controlPlaneCount;
     setNodeRole(newControlPlaneCount >= 3 ? "Application" : "Control Plane");
     setError("");
+
+    // Expand the newly added node
+    setExpandedNodes(new Set(expandedNodes).add(newNode.id));
   };
 
   const confirmRemoveNode = () => {

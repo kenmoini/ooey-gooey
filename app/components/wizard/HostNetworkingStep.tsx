@@ -247,6 +247,7 @@ export default function HostNetworkingStep() {
         <div className="space-y-3">
           {formData.nodes.map((node) => {
             const isNodeExpanded = expandedNodes.has(node.id);
+            
             return (
               <div key={node.id} className="border border-gray-300 rounded-md">
                 <div className="flex items-center">
