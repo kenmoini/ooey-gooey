@@ -247,3 +247,15 @@ Add a function to the wizard that responds to user keyboard input that matches "
 ```
 Add a link to the bottom of the page called "Clear Wizard" that resets all the form data and brings the user back to the first step.
 ```
+
+```
+Add a Copy to Clipboard button to the upper right hand corner of the YAML output blocks in the PreviewStep.tsx
+```
+
+```
+Wrap the YAML output in the PreviewStep.tsx with some collapsed accordion sections
+```
+
+```
+Add a Download button to the upper right hand corner of the YAML output blocks in the PreviewStep.tsx next to the Copy to Clipboard button.
+```
