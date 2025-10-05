@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormContext } from "@/app/context/FormContext";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import GeneralStep from "./wizard/GeneralStep";
 import HostConfigurationStep from "./wizard/HostConfigurationStep";
 import HostNetworkingStep from "./wizard/HostNetworkingStep";
@@ -10,6 +10,7 @@ import NetworkingStep from "./wizard/NetworkingStep";
 import DisconnectedStep from "./wizard/DisconnectedStep";
 import AdvancedStep from "./wizard/AdvancedStep";
 import PreviewStep from "./wizard/PreviewStep";
+import { Node, NetworkInterface } from "@/app/types";
 
 const steps = [
   { title: "General", component: GeneralStep },
@@ -22,9 +23,236 @@ const steps = [
 ];
 
 export default function Wizard() {
-  const { formData, currentStep, setCurrentStep } = useFormContext();
+  const { formData, updateFormData, currentStep, setCurrentStep } = useFormContext();
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const keySequence = useRef<string>("");
+  const keyTimeout = useRef<NodeJS.Timeout | null>(null);
   const CurrentStepComponent = steps[currentStep].component;
+
+  const activateGodMode = () => {
+    console.log("🔥 God Mode Activated!");
+
+    // Create test nodes with interfaces
+    const testNodes: Node[] = [
+      {
+        id: "control-1",
+        name: "cp-1",
+        role: "Control Plane",
+        installationDeviceAuto: true,
+        interfaces: [
+          {
+            id: "iface-1-1",
+            deviceName: "eth0",
+            macAddress: "00:1A:2B:3C:4D:01",
+            type: "Ethernet",
+            state: "Up",
+            enableIPv4: true,
+            enableIPv4DHCP: false,
+            ipv4Address: "192.168.1.101/24",
+            gatewayIPv4: "192.168.1.1",
+            mtu: 1500,
+            defaultRoute: true,
+          } as NetworkInterface,
+        ],
+      },
+      {
+        id: "node-2",
+        name: "cp-2",
+        role: "Control Plane",
+        installationDeviceAuto: true,
+        interfaces: [
+          {
+            id: "iface-2-1",
+            deviceName: "eth0",
+            macAddress: "00:1A:2B:3C:4D:03",
+            type: "Ethernet",
+            state: "Up",
+            enableIPv4: true,
+            enableIPv4DHCP: false,
+            ipv4Address: "192.168.1.102/24",
+            gatewayIPv4: "192.168.1.1",
+            mtu: 1500,
+            defaultRoute: true,
+          } as NetworkInterface,
+        ],
+      },
+      {
+        id: "node-3",
+        name: "cp-3",
+        role: "Control Plane",
+        installationDeviceAuto: true,
+        interfaces: [
+          {
+            id: "iface-3-1",
+            deviceName: "eth0",
+            macAddress: "00:1A:2B:3C:4D:04",
+            type: "Ethernet",
+            state: "Up",
+            enableIPv4: true,
+            enableIPv4DHCP: false,
+            ipv4Address: "192.168.1.103/24",
+            gatewayIPv4: "192.168.1.1",
+            mtu: 1500,
+            defaultRoute: true,
+          } as NetworkInterface,
+        ],
+      },
+      {
+        id: "node-4",
+        name: "worker-1",
+        role: "Application",
+        installationDeviceAuto: false,
+        installationDevicePath: "/dev/nvme0n1",
+        interfaces: [
+          {
+            id: "iface-4-1",
+            deviceName: "eth0",
+            macAddress: "00:1A:2B:3C:4D:05",
+            type: "Ethernet",
+            state: "Up",
+            mtu: 9000,
+          } as NetworkInterface,
+          {
+            id: "iface-4-2",
+            deviceName: "eth1",
+            macAddress: "00:1A:2B:3C:4D:06",
+            type: "Ethernet",
+            state: "Up",
+            mtu: 9000,
+          } as NetworkInterface,
+          {
+            id: "iface-4-3",
+            deviceName: "bond0",
+            type: "Bond",
+            state: "Up",
+            mtu: 9000,
+            defaultRoute: false,
+            bondPorts: ["eth0", "eth1"],
+            bondingMode: "LACP",
+          } as NetworkInterface,
+          {
+            id: "iface-4-4",
+            deviceName: "bond0.123",
+            type: "VLAN",
+            vlanBaseInterface: "bond0",
+            vlanId: 123,
+            state: "Up",
+            mtu: 9000,
+            defaultRoute: true,
+            enableIPv4: true,
+            enableIPv4DHCP: false,
+            ipv4Address: "192.168.1.104/24",
+            gatewayIPv4: "192.168.1.1",
+          } as NetworkInterface,
+        ],
+      },
+      {
+        id: "node-5",
+        name: "worker-2",
+        role: "Application",
+        installationDeviceAuto: false,
+        installationDevicePath: "/dev/nvme0n1",
+        interfaces: [
+          {
+            id: "iface-5-1",
+            deviceName: "eth0",
+            macAddress: "00:1A:2B:3C:4D:07",
+            type: "Ethernet",
+            state: "Up",
+            mtu: 9000,
+          } as NetworkInterface,
+          {
+            id: "iface-5-2",
+            deviceName: "eth1",
+            macAddress: "00:1A:2B:3C:4D:08",
+            type: "Ethernet",
+            state: "Up",
+            mtu: 9000,
+          } as NetworkInterface,
+          {
+            id: "iface-5-3",
+            deviceName: "bond0",
+            type: "Bond",
+            state: "Up",
+            mtu: 9000,
+            defaultRoute: false,
+            bondPorts: ["eth0", "eth1"],
+            bondingMode: "LACP",
+          } as NetworkInterface,
+          {
+            id: "iface-5-4",
+            deviceName: "bond0.123",
+            type: "VLAN",
+            vlanBaseInterface: "bond0",
+            vlanId: 123,
+            state: "Up",
+            mtu: 9000,
+            defaultRoute: true,
+            enableIPv4: true,
+            enableIPv4DHCP: false,
+            ipv4Address: "192.168.1.105/24",
+            gatewayIPv4: "192.168.1.1",
+          } as NetworkInterface,
+        ],
+      },
+    ];
+
+    updateFormData({
+      clusterName: "my-pretty-cluster",
+      clusterDomain: "acme.org",
+      clusterType: "Multi HA Cluster",
+      platformType: "Bare Metal",
+      nodes: testNodes,
+      apiVIP: "192.168.1.100",
+      ingressVIP: "192.168.1.101",
+      dnsServers: ["8.8.8.8", "8.8.4.4"],
+      dnsSearchDomains: ["acme.org"],
+      ntpServers: ["time.google.com"],
+      sshPublicKeys: ["ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC... demo@acme.org"],
+    });
+  };
+
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      // Ignore if typing in an input field
+      if (
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement ||
+        event.target instanceof HTMLSelectElement
+      ) {
+        return;
+      }
+
+      // Clear previous timeout
+      if (keyTimeout.current) {
+        clearTimeout(keyTimeout.current);
+      }
+
+      // Add the key to the sequence
+      keySequence.current += event.key.toLowerCase();
+
+      // Check if the sequence matches "godmode"
+      if (keySequence.current === "godmode") {
+        activateGodMode();
+        keySequence.current = "";
+        return;
+      }
+
+      // Reset sequence after 3 seconds
+      keyTimeout.current = setTimeout(() => {
+        keySequence.current = "";
+      }, 3000);
+    };
+
+    window.addEventListener("keypress", handleKeyPress);
+
+    return () => {
+      window.removeEventListener("keypress", handleKeyPress);
+      if (keyTimeout.current) {
+        clearTimeout(keyTimeout.current);
+      }
+    };
+  }, [updateFormData]);
 
   const validateHostNetworking = (): string[] => {
     const errors: string[] = [];
@@ -71,6 +299,39 @@ export default function Wizard() {
     setValidationErrors([]);
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleClearWizard = () => {
+    if (window.confirm("Are you sure you want to clear all wizard data? This cannot be undone.")) {
+      updateFormData({
+        clusterName: "",
+        clusterDomain: "",
+        clusterType: "Multi HA Cluster",
+        platformType: "Bare Metal",
+        fipsMode: false,
+        nodes: [],
+        loadBalancerType: "Internal",
+        apiVIP: "",
+        ingressVIP: "",
+        dnsServers: [],
+        dnsSearchDomains: [],
+        configureDisconnectedRegistries: false,
+        releaseImageRegistry: "quay.io/openshift-release-dev/ocp-release",
+        platformImagesRegistry: "quay.io/openshift-release-dev/ocp-v4.0-art-dev",
+        registryMappings: [],
+        ntpServers: [],
+        totalClusterNetworkCIDR: "10.128.0.0/14",
+        clusterNetworkHostPrefix: 23,
+        serviceNetworkCIDR: "172.30.0.0/16",
+        httpProxy: "",
+        httpsProxy: "",
+        noProxy: "",
+        sshPublicKeys: [],
+        additionalTrustedRootCAs: "",
+      });
+      setCurrentStep(0);
+      setValidationErrors([]);
     }
   };
 
@@ -143,6 +404,16 @@ export default function Wizard() {
           className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {currentStep === steps.length - 1 ? "Finish" : "Next"}
+        </button>
+      </div>
+
+      {/* Clear Wizard Link */}
+      <div className="mt-6 text-center">
+        <button
+          onClick={handleClearWizard}
+          className="text-sm text-red-600 hover:text-red-800 hover:underline"
+        >
+          Clear Wizard
         </button>
       </div>
     </div>

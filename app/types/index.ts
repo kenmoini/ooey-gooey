@@ -10,14 +10,15 @@ export type BondingMode = "Active/Backup" | "LACP";
 export interface NetworkInterface {
   id: string;
   deviceName: string;
-  macAddress: string;
+  macAddress?: string;
   state?: InterfaceState;
   type?: InterfaceType;
+  mtu?: number;
   enableIPv4?: boolean;
   enableIPv4DHCP?: boolean;
   ipv4Address?: string;
+  gatewayIPv4?: string;
   enableIPv6?: boolean;
-  mtu?: number;
   bondPorts?: string[];
   bondingMode?: BondingMode;
   bridgePorts?: string[];
@@ -94,6 +95,76 @@ export const initialFormData: FormData = {
   sshPublicKeys: [],
   additionalTrustedRootCAs: "",
 };
+
+export interface AgentConfig {
+  apiVersion: string;
+  kind: string;
+  metadata: {
+    name: string;
+  };
+  rendezvousIP: string;
+  additionalNTPSources?: string[];
+  hosts: Array<{
+    hostname: string;
+    role?: NodeRole;
+    interfaces?: Array<{
+      name: string;
+      macAddress?: string;
+    }>;
+    rootDeviceHints?: {
+      deviceName?: string;
+    };
+    networkConfig: {
+      "dns-resolver"?: {
+        config: {
+          server: string[];
+          search?: string[];
+        };
+      };
+      "mac-address"?: string;
+      routes: {
+        config: Array<{
+          destination: string;
+          "next-hop-address": string;
+          "next-hop-interface": string;
+          "table-id": number;
+        }>;
+      };
+      interfaces: Array<{
+        name: string;
+        type: InterfaceType;
+        state: InterfaceState;
+        mtu?: number;
+        ipv4?: {
+          enabled: boolean;
+          dhcp: boolean;
+          address?: Array<{
+            address: string;
+            prefixLength: number;
+          }>;
+        };
+        ipv6?: {
+          enabled: boolean;
+        };
+
+        "link-aggregation"?: {
+          mode: string;
+          port: string[];
+        };
+        vlan: {
+          baseInterface: string;
+          id: number;
+        };
+        bridge?: {
+          ports: string[];
+        };
+      }>;
+    };
+
+
+  }>;
+
+}
 
 
 export interface InstallConfig {

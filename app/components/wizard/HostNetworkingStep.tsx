@@ -39,7 +39,7 @@ export default function HostNetworkingStep() {
   const updateInterface = (
     nodeId: string,
     interfaceId: string,
-    field: "state" | "type" | "enableIPv4" | "enableIPv4DHCP" | "ipv4Address" | "enableIPv6" | "mtu" | "bondPorts" | "bondingMode" | "bridgePorts" | "vlanBaseInterface" | "vlanId",
+    field: "state" | "type" | "enableIPv4" | "enableIPv4DHCP" | "ipv4Address" | "gatewayIPv4" | "enableIPv6" | "mtu" | "bondPorts" | "bondingMode" | "bridgePorts" | "vlanBaseInterface" | "vlanId",
     value: InterfaceState | InterfaceType | BondingMode | boolean | number | string | string[]
   ) => {
     const updatedNodes = formData.nodes.map((node) => {
@@ -819,6 +819,7 @@ export default function HostNetworkingStep() {
                                           </div>
 
                                           {!iface.enableIPv4DHCP && iface.enableIPv4DHCP !== undefined && (
+                                            <>
                                             <div>
                                               <label className="block text-sm font-medium mb-1">
                                                 IP Address
@@ -833,6 +834,23 @@ export default function HostNetworkingStep() {
                                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                               />
                                             </div>
+
+                                            <div>
+                                              <label className="block text-sm font-medium mb-1">
+                                                Gateway
+                                              </label>
+                                              <input
+                                                type="text"
+                                                value={iface.gatewayIPv4 || ""}
+                                                onChange={(e) =>
+                                                  updateInterface(node.id, iface.id, "gatewayIPv4", e.target.value)
+                                                }
+                                                placeholder="e.g., 192.168.1.1"
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                              />
+                                            </div>
+
+                                            </>
                                           )}
                                         </div>
                                       )}

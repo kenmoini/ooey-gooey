@@ -239,3 +239,11 @@ In HostNetworkingStep.tsx add a Radio toggle option in the list of defined inter
 ```
 In HostNetworkingStep.tsx hide the Default Route radio toggle if the interface is an ethernet type and used as a Base Interface for a VLAN or used as a Port for a Bridge or Bond.
 ```
+
+```
+Add a function to the wizard that responds to user keyboard input that matches "godmode" typed in within 3 seconds.  When the user types this it pre-fills the FormData with some test data like "my-pretty-cluster" for Cluster Name, and "acme.org" for Cluster Domain.
+```
+
+```
+Add a link to the bottom of the page called "Clear Wizard" that resets all the form data and brings the user back to the first step.
+```

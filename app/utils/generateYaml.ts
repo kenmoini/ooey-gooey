@@ -90,6 +90,112 @@ export function generateInstallConfigYAML(formData: FormData): string {
   return yaml.dump(installConfig);
 }
 
+export function generateAgentConfigYAML(formData: FormData): string {
+  const agentConfig: any = {
+    apiVersion: "v1alpha1",
+    kind: "AgentConfig",
+    metadata: {
+      name: formData.clusterName,
+    },
+  };
+
+  // Get the IP address of the default route interface of the first defined node
+  const firstNode = formData.nodes[0];
+  if (firstNode) {
+    if (firstNode.interfaces && firstNode.interfaces.length > 0) {
+      const defaultRouteInterface = firstNode.interfaces.find((iface) => iface.defaultRoute);
+      if (defaultRouteInterface && defaultRouteInterface.ipv4Address) {
+        agentConfig.rendezvousIP = defaultRouteInterface.ipv4Address.split('/')[0]; // Remove CIDR suffix
+      }
+    }
+  }
+  if (formData.ntpServers.length > 0) {
+    agentConfig.additionalNTPSources = formData.ntpServers;
+  }
+
+  
+  // Loop through the defined hosts and add them to the agentConfig
+  agentConfig.hosts = formData.nodes.map((node) => {
+    let defaultRouteInterfaceName: string | undefined;
+    let defaultRouteInterfaceIPv4: string | undefined;
+    const host: any = {
+      hostname: node.name,
+    };
+    if (node.role) {
+      if (node.role === "Control Plane") {
+        host.role = "master";
+      } else if (node.role === "Application") {
+        host.role = "worker";
+      }
+    }
+    if (!node.installationDeviceAuto) {
+      host.rootDeviceHints = { deviceName: node.installationDevicePath };
+    }
+    // loop through the interfaces and get the default route interface name
+    
+    if (node.interfaces && node.interfaces.length > 0) {
+      const defaultRouteInterface = node.interfaces.find((iface) => iface.defaultRoute);
+      if (defaultRouteInterface && defaultRouteInterface.ipv4Address) {
+        defaultRouteInterfaceIPv4 = defaultRouteInterface.gatewayIPv4;
+        defaultRouteInterfaceName = defaultRouteInterface.deviceName;
+      }
+      host.interfaces = node.interfaces.map((iface) => {
+        // Only include Ethernet interfaces
+        if (iface.type === "Ethernet") {
+          const interfaceData: any = {
+            name: iface.deviceName,
+            macAddress: iface.macAddress,
+          };
+          return interfaceData;
+        }
+
+      });
+      // Remove any undefined entries (non-Ethernet interfaces)
+      host.interfaces = host.interfaces.filter((iface: any) => iface !== undefined);
+    }
+    if (node.interfaces && node.interfaces.length > 0) {
+      host.networkConfig = { interfaces: [] };
+      host.networkConfig.interfaces = node.interfaces.map((iface) => {
+        const interfaceData: any = {
+          name: iface.deviceName,
+          type: iface.type,
+          state: iface.state,
+        };
+        if (iface.mtu) {
+          interfaceData.mtu = iface.mtu;
+        }
+        return interfaceData;
+      });
+    }
+
+    // Network configuration
+    // Determine the default route interface
+    
+    if (node.interfaces && node.interfaces.length > 0) {
+    host.networkConfig = {
+      routes: {
+        config: [
+          {
+            destination: "0.0.0.0/0",
+            "next-hop-address": defaultRouteInterfaceIPv4,
+            "next-hop-interface": defaultRouteInterfaceName,
+            "table-id": 254,
+          }
+        ],
+      },
+      "dns-resolver": { config: { server: [...formData.dnsServers], search: [...formData.dnsSearchDomains] } },
+      
+    };
+  }
+
+    // 
+    return host;
+  });
+
+  return yaml.dump(agentConfig);
+}
+
+
 export function generateYaml(formData: FormData): string {
   const yamlData: any = {
     cluster: {
