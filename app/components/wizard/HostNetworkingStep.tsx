@@ -556,15 +556,18 @@ export default function HostNetworkingStep() {
                                                     .filter(ethernetIface => {
                                                       const searchTerm = (bondPortInput[iface.id] || "").toLowerCase();
                                                       const deviceMatch = ethernetIface.deviceName.toLowerCase().includes(searchTerm);
-                                                      const macMatch = ethernetIface.macAddress.toLowerCase().includes(searchTerm);
                                                       const notAlreadySelected = !(iface.bondPorts || []).includes(ethernetIface.deviceName);
 
                                                       // Exclude if used in other Bond interfaces
                                                       const usedInOtherBond = node.interfaces?.some(
                                                         otherIface => otherIface.id !== iface.id && otherIface.type === "Bond" && otherIface.bondPorts?.includes(ethernetIface.deviceName)
                                                       );
+                                                      if (ethernetIface.macAddress) {
+                                                        const macMatch = ethernetIface.macAddress.toLowerCase().includes(searchTerm);
+                                                        return (deviceMatch || macMatch) && notAlreadySelected && !usedInOtherBond;
+                                                      }
 
-                                                      return (deviceMatch || macMatch) && notAlreadySelected && !usedInOtherBond;
+                                                      return (deviceMatch) && notAlreadySelected && !usedInOtherBond;
                                                     })
                                                     .map(ethernetIface => (
                                                       <button
@@ -586,7 +589,6 @@ export default function HostNetworkingStep() {
                                                     .filter(ethernetIface => {
                                                       const searchTerm = (bondPortInput[iface.id] || "").toLowerCase();
                                                       const deviceMatch = ethernetIface.deviceName.toLowerCase().includes(searchTerm);
-                                                      const macMatch = ethernetIface.macAddress.toLowerCase().includes(searchTerm);
                                                       const notAlreadySelected = !(iface.bondPorts || []).includes(ethernetIface.deviceName);
 
                                                       // Exclude if used in other Bond interfaces
@@ -594,7 +596,11 @@ export default function HostNetworkingStep() {
                                                         otherIface => otherIface.id !== iface.id && otherIface.type === "Bond" && otherIface.bondPorts?.includes(ethernetIface.deviceName)
                                                       );
 
-                                                      return (deviceMatch || macMatch) && notAlreadySelected && !usedInOtherBond;
+                                                      if (ethernetIface.macAddress) {
+                                                        const macMatch = ethernetIface.macAddress.toLowerCase().includes(searchTerm);
+                                                        return (deviceMatch || macMatch) && notAlreadySelected && !usedInOtherBond;
+                                                      }
+                                                      return (deviceMatch) && notAlreadySelected && !usedInOtherBond;
                                                     }).length === 0 && (
                                                     <div className="px-4 py-2 text-sm text-gray-500">
                                                       No matching interfaces found
