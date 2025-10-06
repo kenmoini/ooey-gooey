@@ -5,7 +5,7 @@ A Next.js-based web application for generating OpenShift Agent-Based Installer (
 ## Features
 
 - **Multi-step Wizard**: Navigate through 7 comprehensive configuration pages:
-  - **General**: Cluster name, domain, type (Single Node/Compact/Multi HA), platform (Bare Metal/vSphere/None), and FIPS mode
+  - **General**: Cluster name, domain, type (Single Node/3-Node/Multi HA), platform (Bare Metal/vSphere/None), and FIPS mode
   - **Networking**: Load balancer type, API/Ingress VIPs, DNS servers, search domains, and cluster networking (CIDR, host prefix, service network)
   - **Hosts**: Dynamic node management with role assignment (Control Plane/Application) and installation device configuration
   - **Host Networking**: Advanced per-host network configuration including interfaces, bonds, bridges, VLANs, IPv4/IPv6 settings
@@ -166,7 +166,7 @@ This application is designed for:
 - Bare metal, vSphere, and platform-agnostic installations
 - Disconnected/air-gapped environments with custom registry mirrors
 - Complex networking scenarios requiring bonds, VLANs, or bridges
-- Single Node OpenShift (SNO), Compact (3-node), and Multi-HA cluster deployments
+- Single Node OpenShift (SNO), 3-Node, and Multi-HA cluster deployments
 
 ## Development
 

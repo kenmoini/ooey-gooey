@@ -1,4 +1,4 @@
-export type ClusterType = "Single Node" | "Compact" | "Multi HA Cluster";
+export type ClusterType = "Single Node" | "3-Node" | "Multi HA Cluster";
 export type LoadBalancerType = "Internal" | "External";
 export type NodeRole = "Control Plane" | "Application";
 export type PlatformType = "Bare Metal" | "vSphere" | "None";

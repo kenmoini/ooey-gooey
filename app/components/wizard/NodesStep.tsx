@@ -23,7 +23,7 @@ export default function NodesStep() {
     switch (formData.clusterType) {
       case "Single Node":
         return 1;
-      case "Compact":
+      case "3-Node":
         return 3;
       case "Multi HA Cluster":
         return Infinity;

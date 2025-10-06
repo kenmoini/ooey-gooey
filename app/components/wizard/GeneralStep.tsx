@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { ClusterType, PlatformType } from "@/app/types";
 
-const clusterTypes: ClusterType[] = ["Single Node", "Compact", "Multi HA Cluster"];
+const clusterTypes: ClusterType[] = ["Single Node", "3-Node", "Multi HA Cluster"];
 const platformTypes: PlatformType[] = ["Bare Metal", "vSphere", "None"];
 
 export default function GeneralStep() {
