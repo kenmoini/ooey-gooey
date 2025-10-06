@@ -319,31 +319,36 @@ export default function Wizard() {
 
     // Validate Networking step before proceeding
     if (currentStep === 1) {
-      const errors: string[] = [];
-      const isSingleNode = formData.clusterType === "Single Node";
+      if (formData.networkingStepValid === false) {
+        const errors: string[] = [];
+        const isSingleNode = formData.clusterType === "Single Node";
 
-      // For non-Single Node clusters, API VIP and Ingress VIP are required
-      if (!isSingleNode) {
-        if (!formData.apiVIP) {
-          errors.push("API VIP is required");
+        // For non-Single Node clusters, API VIP and Ingress VIP are required
+        if (!isSingleNode) {
+          if (!formData.apiVIP) {
+            errors.push("API VIP is required");
+          }
+          if (!formData.ingressVIP) {
+            errors.push("Ingress VIP is required");
+          }
         }
-        if (!formData.ingressVIP) {
-          errors.push("Ingress VIP is required");
+
+        // DNS Servers, DNS Search Domains, and Machine Network CIDRs must not be empty
+        if (formData.dnsServers.length === 0) {
+          errors.push("At least one DNS Server is required");
         }
-      }
+        if (formData.dnsSearchDomains.length === 0) {
+          errors.push("At least one DNS Search Domain is required");
+        }
+        if (formData.machineNetworkCIDRs.length === 0) {
+          errors.push("At least one Machine Network CIDR is required");
+        }
 
-      // DNS Servers, DNS Search Domains, and Machine Network CIDRs must not be empty
-      if (formData.dnsServers.length === 0) {
-        errors.push("At least one DNS Server is required");
-      }
-      if (formData.dnsSearchDomains.length === 0) {
-        errors.push("At least one DNS Search Domain is required");
-      }
-      if (formData.machineNetworkCIDRs.length === 0) {
-        errors.push("At least one Machine Network CIDR is required");
-      }
+        // If no specific errors but still invalid, show generic message
+        if (errors.length === 0) {
+          errors.push("Please fix validation errors in the networking fields");
+        }
 
-      if (errors.length > 0) {
         setValidationErrors(errors);
         return;
       }

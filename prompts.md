@@ -275,3 +275,7 @@ On the General page, validate that the Cluster Name and Cluster Domain are enter
 ```
 Add similar validation logic to the Networking step of the wizard.  Ensure the API VIP and Ingress VIP are defined and that the DNS Servers, DNS Search, and Machine CIDRs lists are not empty
 ```
+
+```
+Add a shared function for validating IPv4 addresses.  Use it to validate the API and Ingress VIP input fields on the Networking page
+```

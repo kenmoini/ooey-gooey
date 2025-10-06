@@ -3,6 +3,7 @@
 import { useFormContext } from "@/app/context/FormContext";
 import { LoadBalancerType } from "@/app/types";
 import { useState, useEffect } from "react";
+import { validateIPv4Address } from "@/app/utils/validation";
 
 const loadBalancerTypes: LoadBalancerType[] = ["Internal", "External"];
 
@@ -11,6 +12,8 @@ export default function NetworkingStep() {
   const [dnsServer, setDnsServer] = useState("");
   const [dnsSearchDomain, setDnsSearchDomain] = useState("");
   const [machineNetworkCIDR, setMachineNetworkCIDR] = useState("");
+  const [apiVIPError, setApiVIPError] = useState("");
+  const [ingressVIPError, setIngressVIPError] = useState("");
 
   const addDnsServer = () => {
     if (dnsServer.trim()) {
@@ -51,13 +54,31 @@ export default function NetworkingStep() {
     });
   };
 
+  const handleApiVIPChange = (value: string) => {
+    updateFormData({ apiVIP: value });
+    const error = validateIPv4Address(value);
+    setApiVIPError(error);
+  };
+
+  const handleIngressVIPChange = (value: string) => {
+    updateFormData({ ingressVIP: value });
+    const error = validateIPv4Address(value);
+    setIngressVIPError(error);
+  };
+
   // Validate networking step
   useEffect(() => {
     const isSingleNode = formData.clusterType === "Single Node";
     const isValid = () => {
-      // For non-Single Node clusters, API VIP and Ingress VIP are required
+      // For non-Single Node clusters, API VIP and Ingress VIP are required and must be valid
       if (!isSingleNode) {
         if (!formData.apiVIP || !formData.ingressVIP) {
+          return false;
+        }
+        // Check for validation errors
+        const apiError = validateIPv4Address(formData.apiVIP);
+        const ingressError = validateIPv4Address(formData.ingressVIP);
+        if (apiError || ingressError) {
           return false;
         }
       }
@@ -120,10 +141,17 @@ export default function NetworkingStep() {
                 id="apiVIP"
                 type="text"
                 value={formData.apiVIP}
-                onChange={(e) => updateFormData({ apiVIP: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => handleApiVIPChange(e.target.value)}
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                  apiVIPError
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:ring-blue-500"
+                }`}
                 placeholder="Enter API VIP address"
               />
+              {apiVIPError && (
+                <p className="mt-1 text-sm text-red-600">{apiVIPError}</p>
+              )}
             </div>
 
             <div className="pb-4">
@@ -135,10 +163,17 @@ export default function NetworkingStep() {
                 id="ingressVIP"
                 type="text"
                 value={formData.ingressVIP}
-                onChange={(e) => updateFormData({ ingressVIP: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => handleIngressVIPChange(e.target.value)}
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                  ingressVIPError
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:ring-blue-500"
+                }`}
                 placeholder="Enter Ingress VIP address"
               />
+              {ingressVIPError && (
+                <p className="mt-1 text-sm text-red-600">{ingressVIPError}</p>
+              )}
             </div>
           </>
         )}
