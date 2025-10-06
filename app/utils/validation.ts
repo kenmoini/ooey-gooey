@@ -47,3 +47,47 @@ export const validateIPv4Address = (ip: string): string => {
 
   return "";
 };
+
+/**
+ * Validates an IPv4 CIDR notation
+ * @param cidr - The CIDR string to validate (e.g., "192.168.1.0/24")
+ * @returns Error message if invalid, empty string if valid
+ */
+export const validateIPv4CIDR = (cidr: string): string => {
+  if (cidr.length === 0) {
+    return "";
+  }
+
+  // Split into IP and prefix
+  const parts = cidr.split("/");
+
+  // Must have exactly 2 parts
+  if (parts.length !== 2) {
+    return "CIDR must be in format: IP/prefix (e.g., 192.168.1.0/24)";
+  }
+
+  const [ip, prefixStr] = parts;
+
+  // Validate the IP address part
+  const ipError = validateIPv4Address(ip);
+  if (ipError) {
+    return ipError;
+  }
+
+  // Validate the prefix length
+  const prefix = parseInt(prefixStr, 10);
+  if (isNaN(prefix)) {
+    return "CIDR prefix must be numeric";
+  }
+
+  if (prefix < 0 || prefix > 32) {
+    return "CIDR prefix must be between 0 and 32";
+  }
+
+  // Check if the string representation matches (no extra characters)
+  if (prefixStr !== prefix.toString()) {
+    return "Invalid CIDR prefix format";
+  }
+
+  return "";
+};

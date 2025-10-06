@@ -3,7 +3,7 @@
 import { useFormContext } from "@/app/context/FormContext";
 import { LoadBalancerType } from "@/app/types";
 import { useState, useEffect } from "react";
-import { validateIPv4Address } from "@/app/utils/validation";
+import { validateIPv4Address, validateIPv4CIDR } from "@/app/utils/validation";
 
 const loadBalancerTypes: LoadBalancerType[] = ["Internal", "External"];
 
@@ -14,11 +14,25 @@ export default function NetworkingStep() {
   const [machineNetworkCIDR, setMachineNetworkCIDR] = useState("");
   const [apiVIPError, setApiVIPError] = useState("");
   const [ingressVIPError, setIngressVIPError] = useState("");
+  const [dnsServerError, setDnsServerError] = useState("");
+  const [machineNetworkCIDRError, setMachineNetworkCIDRError] = useState("");
+
+  const handleDnsServerChange = (value: string) => {
+    setDnsServer(value);
+    const error = validateIPv4Address(value);
+    setDnsServerError(error);
+  };
 
   const addDnsServer = () => {
     if (dnsServer.trim()) {
+      const error = validateIPv4Address(dnsServer.trim());
+      if (error) {
+        setDnsServerError(error);
+        return;
+      }
       updateFormData({ dnsServers: [...formData.dnsServers, dnsServer.trim()] });
       setDnsServer("");
+      setDnsServerError("");
     }
   };
 
@@ -41,10 +55,22 @@ export default function NetworkingStep() {
     });
   };
 
+  const handleMachineNetworkCIDRChange = (value: string) => {
+    setMachineNetworkCIDR(value);
+    const error = validateIPv4CIDR(value);
+    setMachineNetworkCIDRError(error);
+  };
+
   const addMachineNetworkCIDR = () => {
     if (machineNetworkCIDR.trim()) {
+      const error = validateIPv4CIDR(machineNetworkCIDR.trim());
+      if (error) {
+        setMachineNetworkCIDRError(error);
+        return;
+      }
       updateFormData({ machineNetworkCIDRs: [...formData.machineNetworkCIDRs, machineNetworkCIDR.trim()] });
       setMachineNetworkCIDR("");
+      setMachineNetworkCIDRError("");
     }
   };
 
@@ -134,7 +160,7 @@ export default function NetworkingStep() {
           <>
             <div>
               <label htmlFor="apiVIP" className="block text-sm font-medium mb-2">
-                API VIP
+                API VIP {apiVIPError && ( <span className="ml-4 text-sm text-red-600">{apiVIPError}</span> )}
                 <br /><span className="text-gray-400" title="Virtual IP for the API server">DNS A Record matching <span className="font-mono">api.{formData.clusterName}.{formData.clusterDomain}</span></span>
               </label>
               <input
@@ -149,9 +175,6 @@ export default function NetworkingStep() {
                 }`}
                 placeholder="Enter API VIP address"
               />
-              {apiVIPError && (
-                <p className="mt-1 text-sm text-red-600">{apiVIPError}</p>
-              )}
             </div>
 
             <div className="pb-4">
@@ -183,18 +206,22 @@ export default function NetworkingStep() {
 
         <div className="pb-4">
           <label htmlFor="dnsServers" className="block text-sm font-medium mb-2">
-            DNS Servers
+            DNS Servers{dnsServerError && ( <span className="ml-4 text-sm text-red-600">{dnsServerError}</span> )}
           </label>
           <div className="flex gap-2">
-            <input
-              id="dnsServers"
-              type="text"
-              value={dnsServer}
-              onChange={(e) => setDnsServer(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && addDnsServer()}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter DNS server address"
-            />
+              <input
+                id="dnsServers"
+                type="text"
+                value={dnsServer}
+                onChange={(e) => handleDnsServerChange(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && addDnsServer()}
+                className={`w-full px-4 flex-1 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                  dnsServerError
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:ring-blue-500"
+                }`}
+                placeholder="Enter DNS server address"
+              />
             <button
               onClick={addDnsServer}
               className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -267,19 +294,26 @@ export default function NetworkingStep() {
 
         <div>
           <label htmlFor="machineNetworkCIDRs" className="block text-sm font-medium mb-2">
-            Machine Network CIDRs
+            Machine Network CIDRs {machineNetworkCIDRError && ( <span className="ml-4 text-sm text-red-600">{machineNetworkCIDRError}</span> )}
             <br /><span className="text-gray-400 text-xs">Must include used subnets for node default route interfaces and VIPs</span>
           </label>
           <div className="flex gap-2">
-            <input
-              id="machineNetworkCIDRs"
-              type="text"
-              value={machineNetworkCIDR}
-              onChange={(e) => setMachineNetworkCIDR(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && addMachineNetworkCIDR()}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter machine network CIDR (e.g., 192.168.1.0/24)"
-            />
+            <div className="flex-1">
+              <input
+                id="machineNetworkCIDRs"
+                type="text"
+                value={machineNetworkCIDR}
+                onChange={(e) => handleMachineNetworkCIDRChange(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && addMachineNetworkCIDR()}
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                  machineNetworkCIDRError
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:ring-blue-500"
+                }`}
+                placeholder="Enter machine network CIDR (e.g., 192.168.1.0/24)"
+              />
+              
+            </div>
             <button
               onClick={addMachineNetworkCIDR}
               className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
