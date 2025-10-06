@@ -19,7 +19,23 @@ A Next.js-based web application for generating OpenShift Agent-Based Installer (
 - **Modern UI**: Built with Next.js 15, TypeScript, Tailwind CSS, and Ark UI components
 - **Development Helper**: Built-in "god mode" (type `godmode` on any page) to populate test data for development
 
-## Getting Started
+## Deployment as a Container
+
+> Also available at `quay.io/kenmoini/abi-gui:latest`
+
+1. Build the container:
+```bash
+podman build -t abi-gui .
+```
+
+2. Run the container:
+```bash
+podman run --rm -p 8080:8080 abi-gui
+```
+
+3. Access the GUI in your browser via `http://localhost:8080` or `https://localhost:8443`
+
+## Developement - Getting Started
 
 1. Install dependencies:
 ```bash
