@@ -124,6 +124,20 @@ export default function GeneralStep() {
     setClusterDomainError(error);
   };
 
+  // Expose validation function to parent via context
+  useEffect(() => {
+    const isValid = () => {
+      const nameError = validateClusterName(formData.clusterName);
+      const domainError = validateClusterDomain(formData.clusterDomain);
+      return !nameError && !domainError && formData.clusterName.length > 0 && formData.clusterDomain.length > 0;
+    };
+
+    // Store validation function in form data
+    updateFormData({
+      generalStepValid: isValid()
+    });
+  }, [formData.clusterName, formData.clusterDomain, updateFormData]);
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">General Configuration</h2>

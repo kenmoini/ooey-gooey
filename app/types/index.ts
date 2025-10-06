@@ -68,6 +68,7 @@ export interface FormData {
   noProxy: string;
   sshPublicKeys: string[];
   additionalTrustedRootCAs: string;
+  generalStepValid?: boolean;
 }
 
 export const initialFormData: FormData = {

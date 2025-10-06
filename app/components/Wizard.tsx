@@ -301,8 +301,24 @@ export default function Wizard() {
   };
 
   const handleNext = () => {
+    // Validate General step before proceeding
+    if (currentStep === 0) {
+      if (!formData.clusterName) {
+        setValidationErrors(["Cluster Name is required"]);
+        return;
+      }
+      if (!formData.clusterDomain) {
+        setValidationErrors(["Cluster Domain is required"]);
+        return;
+      }
+      if (formData.generalStepValid === false) {
+        setValidationErrors(["Please fix validation errors in Cluster Name and Cluster Domain"]);
+        return;
+      }
+    }
+
     // Validate Host Networking step before proceeding
-    if (currentStep === 4) { // Host Networking is step index 4
+    if (currentStep === 3) { // Host Networking is step index 3
       const errors = validateHostNetworking();
       if (errors.length > 0) {
         setValidationErrors(errors);
