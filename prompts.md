@@ -267,3 +267,11 @@ Analyze this code base and update the README.md file accordingly
 ```
 In the NetworkingStep.tsx file, add a list input field for "Machine Network CIDRs" with helper text saying "Must include used subnets for node default route interfaces and VIPs"
 ```
+
+```
+On the General page, validate that the Cluster Name and Cluster Domain are entered before progressing forward.
+```
+
+```
+Add similar validation logic to the Networking step of the wizard.  Ensure the API VIP and Ingress VIP are defined and that the DNS Servers, DNS Search, and Machine CIDRs lists are not empty
+```

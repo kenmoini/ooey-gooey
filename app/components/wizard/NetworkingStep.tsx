@@ -2,7 +2,7 @@
 
 import { useFormContext } from "@/app/context/FormContext";
 import { LoadBalancerType } from "@/app/types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const loadBalancerTypes: LoadBalancerType[] = ["Internal", "External"];
 
@@ -50,6 +50,44 @@ export default function NetworkingStep() {
       machineNetworkCIDRs: formData.machineNetworkCIDRs.filter((_, i) => i !== index),
     });
   };
+
+  // Validate networking step
+  useEffect(() => {
+    const isSingleNode = formData.clusterType === "Single Node";
+    const isValid = () => {
+      // For non-Single Node clusters, API VIP and Ingress VIP are required
+      if (!isSingleNode) {
+        if (!formData.apiVIP || !formData.ingressVIP) {
+          return false;
+        }
+      }
+
+      // DNS Servers, DNS Search Domains, and Machine Network CIDRs must not be empty
+      if (formData.dnsServers.length === 0) {
+        return false;
+      }
+      if (formData.dnsSearchDomains.length === 0) {
+        return false;
+      }
+      if (formData.machineNetworkCIDRs.length === 0) {
+        return false;
+      }
+
+      return true;
+    };
+
+    updateFormData({
+      networkingStepValid: isValid()
+    });
+  }, [
+    formData.clusterType,
+    formData.apiVIP,
+    formData.ingressVIP,
+    formData.dnsServers,
+    formData.dnsSearchDomains,
+    formData.machineNetworkCIDRs,
+    updateFormData
+  ]);
 
   return (
     <div className="space-y-6">

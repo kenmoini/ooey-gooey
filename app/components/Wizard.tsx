@@ -312,7 +312,39 @@ export default function Wizard() {
         return;
       }
       if (formData.generalStepValid === false) {
-        setValidationErrors(["Please fix validation errors in Cluster Name and Cluster Domain"]);
+        setValidationErrors(["Please fix validation errors"]);
+        return;
+      }
+    }
+
+    // Validate Networking step before proceeding
+    if (currentStep === 1) {
+      const errors: string[] = [];
+      const isSingleNode = formData.clusterType === "Single Node";
+
+      // For non-Single Node clusters, API VIP and Ingress VIP are required
+      if (!isSingleNode) {
+        if (!formData.apiVIP) {
+          errors.push("API VIP is required");
+        }
+        if (!formData.ingressVIP) {
+          errors.push("Ingress VIP is required");
+        }
+      }
+
+      // DNS Servers, DNS Search Domains, and Machine Network CIDRs must not be empty
+      if (formData.dnsServers.length === 0) {
+        errors.push("At least one DNS Server is required");
+      }
+      if (formData.dnsSearchDomains.length === 0) {
+        errors.push("At least one DNS Search Domain is required");
+      }
+      if (formData.machineNetworkCIDRs.length === 0) {
+        errors.push("At least one Machine Network CIDR is required");
+      }
+
+      if (errors.length > 0) {
+        setValidationErrors(errors);
         return;
       }
     }

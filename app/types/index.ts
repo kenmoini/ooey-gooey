@@ -69,6 +69,7 @@ export interface FormData {
   sshPublicKeys: string[];
   additionalTrustedRootCAs: string;
   generalStepValid?: boolean;
+  networkingStepValid?: boolean;
 }
 
 export const initialFormData: FormData = {
