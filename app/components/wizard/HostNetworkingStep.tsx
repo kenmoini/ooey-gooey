@@ -261,12 +261,12 @@ export default function HostNetworkingStep() {
                       {node.role && (
                         <>
                           {node.role === "Control Plane" && (
-                          <span className="px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded">
+                          <span className="px-2 py-1 text-sm text-blue-800 bg-blue-100 rounded">
                             {node.role}
                           </span>
                         )}
                         {node.role === "Application" && (
-                          <span className="px-2 py-1 text-xs text-green-800 bg-green-100 rounded">
+                          <span className="px-2 py-1 text-sm text-green-800 bg-green-100 rounded">
                             {node.role}
                           </span>
                           
@@ -309,7 +309,7 @@ export default function HostNetworkingStep() {
                     </button>
                     {showAddInterfaceMenu[node.id] && (
                       <div className="absolute right-0 mt-1 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-20">
-                        <div className="px-3 py-2 text-xs font-semibold text-gray-500 border-b">
+                        <div className="px-3 py-2 text-sm font-semibold text-gray-500 border-b">
                           Add interface:
                         </div>
                         <button
@@ -375,7 +375,7 @@ export default function HostNetworkingStep() {
                                       {iface.macAddress}
                                     </div>
                                     <div>
-                                      <span className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded">
+                                      <span className="px-2 py-1 text-sm bg-gray-100 text-gray-700 rounded">
                                         {iface.type || "Ethernet"}
                                       </span>
                                     </div>
@@ -425,7 +425,7 @@ export default function HostNetworkingStep() {
                                       </button>
                                       {showCopyDropdown[iface.id] && (
                                         <div className="absolute right-0 mt-1 w-64 bg-white border border-gray-300 rounded-md shadow-lg z-20">
-                                          <div className="px-3 py-2 text-xs font-semibold text-gray-500 border-b">
+                                          <div className="px-3 py-2 text-sm font-semibold text-gray-500 border-b">
                                             Copy to host:
                                           </div>
                                           {getEligibleNodesForCopy(node.id, iface).length === 0 ? (
@@ -442,7 +442,7 @@ export default function HostNetworkingStep() {
                                               >
                                                 <div className="font-medium text-sm">{targetNode.name}</div>
                                                 {targetNode.role && (
-                                                  <div className="text-xs text-gray-500">{targetNode.role}</div>
+                                                  <div className="text-sm text-gray-500">{targetNode.role}</div>
                                                 )}
                                               </button>
                                             ))
@@ -582,7 +582,7 @@ export default function HostNetworkingStep() {
                                                         className="w-full text-left px-4 py-2 hover:bg-gray-100"
                                                       >
                                                         <div className="font-mono text-sm">{ethernetIface.deviceName}</div>
-                                                        <div className="text-xs text-gray-500">{ethernetIface.macAddress}</div>
+                                                        <div className="text-sm text-gray-500">{ethernetIface.macAddress}</div>
                                                       </button>
                                                     ))}
                                                   {node.interfaces
@@ -693,13 +693,13 @@ export default function HostNetworkingStep() {
                                                         <div className="font-mono text-sm">
                                                           {candidateIface.deviceName}
                                                           {candidateIface.type === "Bond" && (
-                                                            <span className="ml-2 px-1.5 py-0.5 text-xs bg-purple-100 text-purple-800 rounded">Bond</span>
+                                                            <span className="ml-2 px-1.5 py-0.5 text-sm bg-purple-100 text-purple-800 rounded">Bond</span>
                                                           )}
                                                           {candidateIface.type === "VLAN" && (
-                                                            <span className="ml-2 px-1.5 py-0.5 text-xs bg-green-100 text-green-800 rounded">VLAN</span>
+                                                            <span className="ml-2 px-1.5 py-0.5 text-sm bg-green-100 text-green-800 rounded">VLAN</span>
                                                           )}
                                                         </div>
-                                                        <div className="text-xs text-gray-500">{candidateIface.macAddress}</div>
+                                                        <div className="text-sm text-gray-500">{candidateIface.macAddress}</div>
                                                       </button>
                                                     ))}
                                                   {node.interfaces

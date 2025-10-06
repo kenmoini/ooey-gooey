@@ -41,7 +41,7 @@ export default function DisconnectedStep() {
             onChange={(e) => updateFormData({ configureDisconnectedRegistries: e.target.checked })}
             className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
           />
-          <label htmlFor="configureDisconnectedRegistries" className="ml-2 text-sm font-medium">
+          <label htmlFor="configureDisconnectedRegistries" className="ml-2 text-md font-medium">
             Configure Disconnected Registries
           </label>
         </div>
@@ -49,11 +49,11 @@ export default function DisconnectedStep() {
         {formData.configureDisconnectedRegistries && (
           <div className="space-y-4 pl-6 border-l-2 border-blue-500">
 
-              <div className="py-2">
+              <div className="py-2 text-sm text-gray-600">
                 <span>Ensure the Root Certificate Authority that is used for the Mirror Registry is added in the Additional Trusted Root CAs field in the next step.</span>
               </div>
             <div>
-              <label htmlFor="releaseImageRegistry" className="block text-sm font-medium mb-2">
+              <label htmlFor="releaseImageRegistry" className="block text-md font-medium mb-2">
                 Release Image Registry
               </label>
               <input
@@ -67,7 +67,7 @@ export default function DisconnectedStep() {
             </div>
 
             <div className="pb-5">
-              <label htmlFor="platformImagesRegistry" className="block text-sm font-medium mb-2">
+              <label htmlFor="platformImagesRegistry" className="block text-md font-medium mb-2">
                 Platform Images Registry
               </label>
               <input
@@ -83,7 +83,7 @@ export default function DisconnectedStep() {
             <hr />
 
             <div className="pt-5">
-              <label className="block text-sm font-medium mb-2">
+              <label className="block text-md font-medium mb-2">
                 Additional Registry Mappings
               </label>
               <div className="space-y-2">
@@ -120,11 +120,11 @@ export default function DisconnectedStep() {
                     >
                       <div className="flex-1 grid grid-cols-2 gap-4">
                         <div>
-                          <span className="text-xs text-gray-500">Source:</span>
+                          <span className="text-sm text-gray-500">Source:</span>
                           <div className="font-mono text-sm">{mapping.sourceRegistry}</div>
                         </div>
                         <div>
-                          <span className="text-xs text-gray-500">Mirror:</span>
+                          <span className="text-sm text-gray-500">Mirror:</span>
                           <div className="font-mono text-sm">{mapping.mirrorRegistry}</div>
                         </div>
                       </div>

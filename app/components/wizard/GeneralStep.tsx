@@ -144,7 +144,7 @@ export default function GeneralStep() {
 
       <div className="space-y-4">
         <div>
-          <label htmlFor="clusterName" className="block text-sm font-medium mb-2">
+          <label htmlFor="clusterName" className="block text-md font-medium mb-2">
             Cluster Name
           </label>
           <input
@@ -162,13 +162,13 @@ export default function GeneralStep() {
           {clusterNameError && (
             <p className="mt-1 text-sm text-red-600">{clusterNameError}</p>
           )}
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-sm text-gray-500">
             Must follow RFC 1123: lowercase, max 63 chars, start with letter, end with alphanumeric, only alphanumeric or dashes.
           </p>
         </div>
 
         <div>
-          <label htmlFor="clusterDomain" className="block text-sm font-medium mb-2">
+          <label htmlFor="clusterDomain" className="block text-md font-medium mb-2">
             Cluster Domain
           </label>
           <input
@@ -188,7 +188,7 @@ export default function GeneralStep() {
           )}
         </div>
         <div>
-          <label htmlFor="clusterType" className="block text-sm font-medium mb-2">
+          <label htmlFor="clusterType" className="block text-md font-medium mb-2">
             Cluster Type
           </label>
           <select
@@ -206,7 +206,7 @@ export default function GeneralStep() {
         </div>
 
         <div>
-          <label htmlFor="platformType" className="block text-sm font-medium mb-2">
+          <label htmlFor="platformType" className="block text-md font-medium mb-2">
             Platform Type
           </label>
           <select
@@ -225,7 +225,7 @@ export default function GeneralStep() {
             ))}
           </select>
           {isSingleNode && (
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-sm text-gray-500">
               Platform Type is set to &quot;None&quot; for Single Node clusters
             </p>
           )}

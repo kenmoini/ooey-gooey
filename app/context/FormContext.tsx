@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, ReactNode } from "react";
 import { FormData, initialFormData } from "@/app/types";
 
 interface FormContextType {
@@ -16,9 +16,9 @@ export function FormProvider({ children }: { children: ReactNode }) {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [currentStep, setCurrentStep] = useState(0);
 
-  const updateFormData = (data: Partial<FormData>) => {
+  const updateFormData = useCallback((data: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
-  };
+  }, []);
 
   return (
     <FormContext.Provider

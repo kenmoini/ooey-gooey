@@ -159,7 +159,7 @@ export default function NetworkingStep() {
         ) : (
           <>
             <div>
-              <label htmlFor="apiVIP" className="block text-sm font-medium mb-2">
+              <label htmlFor="apiVIP" className="block text-md font-medium mb-2">
                 API VIP {apiVIPError && ( <span className="ml-4 text-sm text-red-600">{apiVIPError}</span> )}
                 <br /><span className="text-gray-400" title="Virtual IP for the API server">DNS A Record matching <span className="font-mono">api.{formData.clusterName}.{formData.clusterDomain}</span></span>
               </label>
@@ -178,7 +178,7 @@ export default function NetworkingStep() {
             </div>
 
             <div className="pb-4">
-              <label htmlFor="ingressVIP" className="block text-sm font-medium mb-2">
+              <label htmlFor="ingressVIP" className="block text-md font-medium mb-2">
                 Ingress VIP
                 <br /><span className="text-gray-400" title="Virtual IP for the API server">DNS A Record matching <span className="font-mono">*.apps.{formData.clusterName}.{formData.clusterDomain}</span></span>
               </label>
@@ -205,7 +205,7 @@ export default function NetworkingStep() {
         <hr className="pt-4" />
 
         <div className="pb-4">
-          <label htmlFor="dnsServers" className="block text-sm font-medium mb-2">
+          <label htmlFor="dnsServers" className="block text-md font-medium mb-2">
             DNS Servers{dnsServerError && ( <span className="ml-4 text-sm text-red-600">{dnsServerError}</span> )}
           </label>
           <div className="flex gap-2">
@@ -250,7 +250,7 @@ export default function NetworkingStep() {
         </div>
 
         <div className="pb-4">
-          <label htmlFor="dnsSearchDomains" className="block text-sm font-medium mb-2">
+          <label htmlFor="dnsSearchDomains" className="block text-md font-medium mb-2">
             DNS Search Domains
           </label>
           <div className="flex gap-2">
@@ -293,9 +293,9 @@ export default function NetworkingStep() {
         <hr className="pt-4" />
 
         <div>
-          <label htmlFor="machineNetworkCIDRs" className="block text-sm font-medium mb-2">
+          <label htmlFor="machineNetworkCIDRs" className="block text-md font-medium mb-2">
             Machine Network CIDRs {machineNetworkCIDRError && ( <span className="ml-4 text-sm text-red-600">{machineNetworkCIDRError}</span> )}
-            <br /><span className="text-gray-400 text-xs">Must include used subnets for node default route interfaces and VIPs</span>
+            <br /><span className="text-gray-400 text-sm">Must include used subnets for node default route interfaces and VIPs</span>
           </label>
           <div className="flex gap-2">
             <div className="flex-1">

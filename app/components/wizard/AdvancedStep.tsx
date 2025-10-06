@@ -60,7 +60,7 @@ export default function AdvancedStep() {
 
       <div className="space-y-4">
         <div className="pb-4">
-          <label htmlFor="ntpServers" className="block text-sm font-medium mb-2">
+          <label htmlFor="ntpServers" className="block text-md font-medium mb-2">
             NTP Servers
           </label>
           <div className="flex gap-2">
@@ -103,7 +103,7 @@ export default function AdvancedStep() {
         <hr />
 
         <div className="py-5">
-          <label htmlFor="sshPublicKeys" className="block text-sm font-medium mb-2">
+          <label htmlFor="sshPublicKeys" className="block text-md font-medium mb-2">
             SSH Public Keys
           </label>
           <div className="flex gap-2">
@@ -159,7 +159,7 @@ export default function AdvancedStep() {
         <hr />
 
         <div className="py-5">
-          <label htmlFor="additionalTrustedRootCAs" className="block text-sm font-medium mb-2">
+          <label htmlFor="additionalTrustedRootCAs" className="block text-md font-medium mb-2">
             Additional Trusted Root CAs
           </label>
           <textarea
@@ -177,7 +177,7 @@ export default function AdvancedStep() {
             onClick={() => setIsSubnetsExpanded(!isSubnetsExpanded)}
             className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50"
           >
-            <span className="text-sm font-medium">Cluster Subnets</span>
+            <span className="text-md font-medium">Cluster Subnets</span>
             <svg
               className={`w-5 h-5 transition-transform ${isSubnetsExpanded ? "rotate-180" : ""}`}
               fill="none"
@@ -191,7 +191,7 @@ export default function AdvancedStep() {
           {isSubnetsExpanded && (
             <div className="px-4 pb-4 space-y-4 border-t border-gray-300">
               <div className="pt-4">
-                <label htmlFor="totalClusterNetworkCIDR" className="block text-sm font-medium mb-2">
+                <label htmlFor="totalClusterNetworkCIDR" className="block text-md font-medium mb-2">
                   Total Cluster Network CIDR
                 </label>
                 <input
@@ -205,7 +205,7 @@ export default function AdvancedStep() {
               </div>
 
               <div>
-                <label htmlFor="clusterNetworkHostPrefix" className="block text-sm font-medium mb-2">
+                <label htmlFor="clusterNetworkHostPrefix" className="block text-md font-medium mb-2">
                   Cluster Network Host Prefix
                 </label>
                 <select
@@ -223,7 +223,7 @@ export default function AdvancedStep() {
               </div>
 
               <div>
-                <label htmlFor="serviceNetworkCIDR" className="block text-sm font-medium mb-2">
+                <label htmlFor="serviceNetworkCIDR" className="block text-md font-medium mb-2">
                   Service Network CIDR
                 </label>
                 <input
@@ -245,7 +245,7 @@ export default function AdvancedStep() {
             onClick={() => setIsProxyExpanded(!isProxyExpanded)}
             className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50"
           >
-            <span className="text-sm font-medium">Proxy Configuration</span>
+            <span className="text-md font-medium">Proxy Configuration</span>
             <svg
               className={`w-5 h-5 transition-transform ${isProxyExpanded ? "rotate-180" : ""}`}
               fill="none"
@@ -259,7 +259,7 @@ export default function AdvancedStep() {
           {isProxyExpanded && (
             <div className="px-4 pb-4 space-y-4 border-t border-gray-300">
               <div className="pt-4">
-                <label htmlFor="httpProxy" className="block text-sm font-medium mb-2">
+                <label htmlFor="httpProxy" className="block text-md font-medium mb-2">
                   HTTP Proxy
                 </label>
                 <input
@@ -273,7 +273,7 @@ export default function AdvancedStep() {
               </div>
 
               <div>
-                <label htmlFor="httpsProxy" className="block text-sm font-medium mb-2">
+                <label htmlFor="httpsProxy" className="block text-md font-medium mb-2">
                   HTTPS Proxy
                 </label>
                 <input
@@ -287,7 +287,7 @@ export default function AdvancedStep() {
               </div>
 
               <div>
-                <label htmlFor="noProxy" className="block text-sm font-medium mb-2">
+                <label htmlFor="noProxy" className="block text-md font-medium mb-2">
                   No Proxy
                 </label>
                 <input
@@ -300,7 +300,7 @@ export default function AdvancedStep() {
                 />
               </div>
               <div>
-                <span className="text-xs text-gray-500">If your outbound proxy is doing SSL-reencryption then ensure the Root CA is present in the Additional Trusted Root CAs field above.</span>
+                <span className="text-sm text-gray-500">If your outbound proxy is doing SSL-reencryption then ensure the Root CA is present in the Additional Trusted Root CAs field above.</span>
               </div>
             </div>
           )}
@@ -314,7 +314,7 @@ export default function AdvancedStep() {
             onChange={(e) => updateFormData({ fipsMode: e.target.checked })}
             className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
           />
-          <label htmlFor="fipsMode" className="ml-2 text-sm font-medium">
+          <label htmlFor="fipsMode" className="ml-2 text-md font-medium">
             FIPS Mode
           </label>
           <p className="mt-1 text-sm text-gray-500">

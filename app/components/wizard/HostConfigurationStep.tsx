@@ -288,12 +288,12 @@ export default function HostConfigurationStep() {
                     {node.role && (
                       <>
                         {node.role === "Control Plane" && (
-                        <span className="px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded">
+                        <span className="px-2 py-1 text-sm text-blue-800 bg-blue-100 rounded">
                           {node.role}
                         </span>
                       )}
                       {node.role === "Application" && (
-                        <span className="px-2 py-1 text-xs text-green-800 bg-green-100 rounded">
+                        <span className="px-2 py-1 text-sm text-green-800 bg-green-100 rounded">
                           {node.role}
                         </span>
                         
@@ -439,11 +439,11 @@ export default function HostConfigurationStep() {
                               >
                                 <div className="flex-1 grid grid-cols-2 gap-4">
                                   <div>
-                                    <span className="text-xs text-gray-500">Device:</span>
+                                    <span className="text-sm text-gray-500">Device:</span>
                                     <div className="font-mono text-sm">{iface.deviceName}</div>
                                   </div>
                                   <div>
-                                    <span className="text-xs text-gray-500">MAC:</span>
+                                    <span className="text-sm text-gray-500">MAC:</span>
                                     <div className="font-mono text-sm">{iface.macAddress}</div>
                                   </div>
                                 </div>
