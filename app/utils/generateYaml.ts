@@ -97,6 +97,7 @@ export function generateInstallConfigYAML(formData: FormData): string {
 }
 
 export function generateAgentConfigYAML(formData: FormData): string {
+  // Start building the AgentConfig structure
   const agentConfig: any = {
     apiVersion: "v1alpha1",
     kind: "AgentConfig",
@@ -116,11 +117,12 @@ export function generateAgentConfigYAML(formData: FormData): string {
       }
     }
   }
+
+  // If NTP servers are defined, add them to the config
   if (formData.ntpServers.length > 0) {
     agentConfig.additionalNTPSources = formData.ntpServers;
   }
 
-  
   // Loop through the defined hosts and add them to the agentConfig
   agentConfig.hosts = formData.nodes.map((node) => {
     let defaultRouteInterfaceName: string | undefined;
@@ -128,6 +130,8 @@ export function generateAgentConfigYAML(formData: FormData): string {
     const host: any = {
       hostname: node.name,
     };
+
+    // Set the node role to the appropriate value
     if (node.role) {
       if (node.role === "Control Plane") {
         host.role = "master";
@@ -135,6 +139,8 @@ export function generateAgentConfigYAML(formData: FormData): string {
         host.role = "worker";
       }
     }
+
+    // Set the installation disk if auto is not selected
     if (!node.installationDeviceAuto) {
       host.rootDeviceHints = { deviceName: node.installationDevicePath };
     }
@@ -157,7 +163,6 @@ export function generateAgentConfigYAML(formData: FormData): string {
       });
       // Remove any undefined entries (non-Ethernet interfaces)
       host.interfaces = host.interfaces.filter((iface: any) => iface !== undefined);
-
     }
 
     // Network configuration
