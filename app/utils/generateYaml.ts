@@ -105,13 +105,14 @@ export function generateAgentConfigYAML(formData: FormData): string {
     },
   };
 
-  // Get the IP address of the default route interface of the first defined node
-  const firstNode = formData.nodes[0];
-  if (firstNode) {
-    if (firstNode.interfaces && firstNode.interfaces.length > 0) {
-      const defaultRouteInterface = firstNode.interfaces.find((iface) => iface.defaultRoute);
-      if (defaultRouteInterface && defaultRouteInterface.ipv4Address) {
+  // Loop through the hosts, find the first node with a default route interface and Static IP addressing
+  agentConfig.rendezvousIP = "CHANGE_ME"; // Placeholder if no nodes are defined
+  for (const node of formData.nodes) {
+    if (node.interfaces && node.interfaces.length > 0) {
+      const defaultRouteInterface = node.interfaces.find((iface) => iface.defaultRoute);
+      if (defaultRouteInterface && !defaultRouteInterface.enableIPv4DHCP && defaultRouteInterface.ipv4Address) {
         agentConfig.rendezvousIP = defaultRouteInterface.ipv4Address.split('/')[0]; // Remove CIDR suffix
+        break;
       }
     }
   }
@@ -161,21 +162,34 @@ export function generateAgentConfigYAML(formData: FormData): string {
 
     // Network configuration
     if (node.interfaces && node.interfaces.length > 0) {
-    host.networkConfig = {
-      routes: {
-        config: [
-          {
-            destination: "0.0.0.0/0",
-            "next-hop-address": defaultRouteInterfaceIPv4,
-            "next-hop-interface": defaultRouteInterfaceName,
-            "table-id": 254,
-          }
-        ],
-      },
-      "dns-resolver": { config: { server: [...formData.dnsServers], search: [...formData.dnsSearchDomains] } },
-      
-    };
-    if (node.interfaces && node.interfaces.length > 0) {
+      // Set up DNS resolver and routes
+      host.networkConfig = {
+        "dns-resolver": { config: { server: [...formData.dnsServers], search: [...formData.dnsSearchDomains] } },
+      };
+      // Check to see if any this node has any non-DHCP IPv4 interfaces
+      var staticInterfaceFound: boolean = false;
+      for (const iface of node.interfaces) {
+        if (iface.enableIPv4 && !iface.enableIPv4DHCP && iface.ipv4Address) {
+          staticInterfaceFound = true;
+          break;
+        }
+      }
+      // If there are no static IPv4 interfaces, set the default route via DHCP interface
+      if (staticInterfaceFound && defaultRouteInterfaceIPv4 && defaultRouteInterfaceName) {
+        host.networkConfig = {
+          routes: {
+            config: [
+              {
+                destination: "0.0.0.0/0",
+                "next-hop-address": defaultRouteInterfaceIPv4,
+                "next-hop-interface": defaultRouteInterfaceName,
+                "table-id": 254,
+              }
+            ],
+          },
+        };
+      }
+    //if (node.interfaces && node.interfaces.length > 0) {
       host.networkConfig.interfaces = node.interfaces.map((iface) => {
         const interfaceData: any = {
           name: iface.deviceName,
@@ -256,7 +270,7 @@ export function generateAgentConfigYAML(formData: FormData): string {
         return interfaceData;
       });
     }
-  }
+  //}
 
     // 
     return host;

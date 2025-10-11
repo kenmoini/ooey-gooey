@@ -53,6 +53,7 @@ export interface FormData {
   apiVIP: string;
   ingressVIP: string;
   dnsServers: string[];
+  rendezvousIP?: string;
   dnsSearchDomains: string[];
   machineNetworkCIDRs: string[];
   configureDisconnectedRegistries: boolean;
@@ -82,6 +83,7 @@ export const initialFormData: FormData = {
   loadBalancerType: "Internal",
   apiVIP: "",
   ingressVIP: "",
+  rendezvousIP: "",
   dnsServers: [],
   dnsSearchDomains: [],
   machineNetworkCIDRs: [],
