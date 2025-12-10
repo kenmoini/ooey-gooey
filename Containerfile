@@ -23,6 +23,10 @@ RUN npm run build
 # ========================================================================
 FROM registry.access.redhat.com/ubi9/httpd-24:latest
 
+RUN dnf update -y && \
+    dnf clean all && \
+    rm -rf /var/cache/yum
+
 COPY --from=builder /opt/app-root/src/out /var/www/html
 
 EXPOSE 8080
