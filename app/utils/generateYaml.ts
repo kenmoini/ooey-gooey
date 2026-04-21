@@ -258,7 +258,7 @@ export function generateAgentConfigYAML(formData: FormData): string {
           if (!iface.enableIPv4DHCP && iface.ipv4Address) {
             interfaceData.ipv4.address = [
               {
-                ip: iface.ipv4Address,
+                ip: iface.ipv4Address.split('/')[0],
                 "prefix-length": parseInt(iface.ipv4Address.split('/')[1], 10),
               },
             ];
