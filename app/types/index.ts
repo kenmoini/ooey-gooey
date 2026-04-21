@@ -145,7 +145,7 @@ export interface AgentConfig {
           enabled: boolean;
           dhcp: boolean;
           address?: Array<{
-            address: string;
+            ip: string;
             "prefix-length": number;
           }>;
         };
